@@ -1,0 +1,15 @@
+ext {
+  moduleName = 'Common'
+  moduleDescription = ''
+}
+
+dependencies {
+  compileOnly localGroovy()
+  compileOnly gradleApi()
+
+  api 'commons-io:commons-io'
+  api 'org.apache.commons:commons-collections4'
+
+  testImplementation localGroovy()
+  testImplementation gradleApi()
+}

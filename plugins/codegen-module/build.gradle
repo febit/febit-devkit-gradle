@@ -1,0 +1,35 @@
+apply plugin: 'java-gradle-plugin'
+
+ext {
+  withoutMavenJavaPublications = true
+
+  moduleName = 'Codegen Module'
+  moduleDescription = ''
+}
+
+gradlePlugin {
+  plugins {
+    apiclientCodegenPlugin {
+      id = 'org.febit.codegen-module'
+      implementationClass = 'org.febit.devkit.gradle.codegen.module.CodegenModulePlugin'
+    }
+  }
+}
+
+dependencies {
+  api project(':febit-devkit-gradle-common')
+  api 'org.apache.commons:commons-lang3'
+
+  implementation 'com.google.code.findbugs:jsr305'
+  compileOnly localGroovy()
+  compileOnly gradleApi()
+
+  testImplementation 'org.slf4j:slf4j-api'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api'
+  testImplementation 'org.mockito:mockito-junit-jupiter'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+  testImplementation localGroovy()
+  testImplementation gradleApi()
+}
+

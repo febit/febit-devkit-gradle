@@ -1,0 +1,98 @@
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+ext {
+  publishProfile = findProperty('publish.profile')
+}
+
+// Disabling Gradle Module Metadata publication
+//   see: https://docs.gradle.org/7.0/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
+tasks.withType(GenerateModuleMetadata) {
+  enabled = false
+}
+
+signing {
+  required {
+    publishProperty("sign").toString() == 'true'
+  }
+  sign publishing.publications
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  archiveClassifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  archiveClassifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+task install(dependsOn: publishToMavenLocal) {
+  group = 'Publishing'
+  description = 'Installs artifacts to local Maven repository'
+}
+
+publishing {
+  repositories {
+    maven {
+      allowInsecureProtocol = true
+      credentials {
+        username publishProperty("username")
+        password publishProperty("password")
+      }
+      url = version.endsWith('-SNAPSHOT')
+          ? publishProperty("snapshotsUrl")
+          : publishProperty("releasesUrl")
+    }
+  }
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact sourcesJar
+      artifact javadocJar
+      afterEvaluate {
+        pom {
+          name = project.ext.moduleName
+          description = project.ext.moduleDescription
+          url = 'https://github.com/febit/febit-devkit-gradle'
+          organization {
+            name = 'Febit'
+            url = 'https://github.com/febit'
+          }
+          licenses {
+            license {
+              name = 'Apache License, Version 2.0'
+              url = 'https://github.com/febit/febit-devkit-gradle/blob/master/LICENSE.txt'
+              distribution = 'repo'
+            }
+          }
+          scm {
+            url = 'https://github.com/febit/febit-devkit-gradle'
+            connection = 'scm:git:https://github.com/febit/febit-devkit-gradle.git'
+            developerConnection = 'scm:git:https://github.com/febit/febit-devkit-gradle.git'
+          }
+          issueManagement {
+            system = 'GitHub'
+            url = 'https://github.com/febit/febit-devkit-gradle/issues'
+          }
+          developers {
+            developer {
+              id = 'zqq'
+              name = 'Zhu Qingqing'
+              email = 'zqq@febit.org'
+              timezone = '+8'
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+def publishProperty(def key) {
+  if (publishProfile == null) {
+    return null
+  }
+  return findProperty("publish." + publishProfile + "." + key)
+}

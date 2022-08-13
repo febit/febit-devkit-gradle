@@ -1,0 +1,25 @@
+pluginManagement {
+  repositories {
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url 'https://maven.aliyun.com/repository/central' }
+  }
+}
+
+rootProject.name = 'febit-devkit-gradle'
+
+subModule 'common'
+
+gradleModule 'codegen-module'
+gradleModule 'standard-java'
+
+def subModule(String name) {
+  String fullName = ":febit-devkit-gradle-${name}"
+  include fullName
+  project(fullName).projectDir = file("${name}")
+}
+
+def gradleModule(String name) {
+  def fullName = ':febit-devkit-gradle-' + name + '-plugin'
+  include fullName
+  project(fullName).projectDir = file("plugins/${name}")
+}
