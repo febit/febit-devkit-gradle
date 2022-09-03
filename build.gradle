@@ -4,7 +4,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.12.RELEASE'
 }
 
-group 'org.febit.devkit-gradle'
+group 'org.febit.devkit.gradle'
 version '1.0.0-SNAPSHOT'
 
 ext {

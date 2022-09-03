@@ -9,17 +9,16 @@ rootProject.name = 'febit-devkit-gradle'
 
 subModule 'common'
 
-gradleModule 'codegen-module'
-gradleModule 'standard-java'
+gradleModule 'basic'
 
 def subModule(String name) {
-  String fullName = ":febit-devkit-gradle-${name}"
+  String fullName = ":febit-gradle-${name}"
   include fullName
   project(fullName).projectDir = file("${name}")
 }
 
 def gradleModule(String name) {
-  def fullName = ':febit-devkit-gradle-' + name + '-plugin'
+  def fullName = ':febit-gradle-' + name + '-plugin'
   include fullName
-  project(fullName).projectDir = file("plugins/${name}")
+  project(fullName).projectDir = file("plugin-${name}")
 }
