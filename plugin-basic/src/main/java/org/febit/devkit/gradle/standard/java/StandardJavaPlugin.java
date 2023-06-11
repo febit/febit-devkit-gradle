@@ -27,6 +27,7 @@ public class StandardJavaPlugin implements Plugin<Project> {
         parent.allprojects(project -> {
             StandardJavaRegister.of(project).register();
             StandardMavenPublishRegister.of(project).register();
+            StandardPomDependencyManagementRegister.of(project).register();
         });
     }
 }

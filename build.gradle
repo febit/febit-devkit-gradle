@@ -1,5 +1,5 @@
 plugins {
-  id 'io.freefair.lombok' version '6.6.3'
+  id 'io.freefair.lombok' version '8.0.1'
   id 'com.github.hierynomus.license' version '0.16.1'
   id 'io.spring.dependency-management' version '1.1.0'
 }
@@ -11,46 +11,20 @@ ext {
   versions = [
       commonsCollections4       : '4.4',
       spotbugs                  : '4.7.3',
-      commonsIo                 : '2.11.0',
-      springBoot                : '2.7.9',
+      commonsIo                 : '2.13.0',
+      springBoot                : '2.7.12',
       jsr305                    : '3.0.2',
       assertj                   : '3.24.2',
-      lombokPlugin              : '6.6.3',
+      lombokPlugin              : '8.0.1',
       dependencyManagementPlugin: '1.1.0',
   ]
 }
 
 allprojects {
-
-  group rootProject.group
-  version rootProject.version
-
-  repositories {
-    maven { url "https://maven.aliyun.com/repository/central" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-  }
-}
-
-def javaModules() {
-  subprojects.findAll {
-    !it.name.endsWith('-bom')
-  }
-}
-
-configure(javaModules()) {
-
-  group rootProject.group
-  version rootProject.version
-
-  apply plugin: 'java-library'
-  apply plugin: 'io.freefair.lombok'
   apply plugin: 'com.github.hierynomus.license'
-  apply plugin: 'io.spring.dependency-management'
 
-  apply from: "${rootDir}/gradle/publish-maven.gradle"
-
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  group rootProject.group
+  version rootProject.version
 
   license {
     mapping {
@@ -63,23 +37,41 @@ configure(javaModules()) {
   }
 
   repositories {
-    maven { url "https://maven.aliyun.com/repository/central" }
+    maven { url "https://repo.huaweicloud.com/repository/maven/" }
     maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
   }
+}
 
-  tasks.withType(Test) {
+def javaLibModules() {
+  subprojects.findAll {
+    !it.name.endsWith('-bom')
+  }
+}
+
+configure(javaLibModules()) {
+
+  apply plugin: 'java-library'
+  apply plugin: 'io.freefair.lombok'
+  apply plugin: 'io.spring.dependency-management'
+
+  apply from: "${rootDir}/gradle/publish-maven.gradle"
+
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+
+
+  tasks.withType(Test).configureEach {
     testLogging.events = ["FAILED", "PASSED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"]
   }
 
-  tasks.withType(JavaCompile) {
+  tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.debug = true
     options.compilerArgs << "-Xlint:unchecked"
     options.compilerArgs << "-Xlint:deprecation"
   }
 
-  tasks.withType(Javadoc) {
+  tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
   }
@@ -99,6 +91,9 @@ configure(javaModules()) {
   }
 
   dependencyManagement {
+    generatedPomCustomization {
+      enabled = false
+    }
     imports {
       mavenBom "org.springframework.boot:spring-boot-dependencies:${versions.springBoot}"
     }

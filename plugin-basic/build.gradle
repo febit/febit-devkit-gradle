@@ -26,7 +26,6 @@ dependencies {
   api 'org.apache.commons:commons-lang3'
   api project(':febit-gradle-common')
 
-  implementation 'com.google.code.findbugs:jsr305'
   implementation "io.freefair.gradle:lombok-plugin"
   implementation "io.spring.gradle:dependency-management-plugin"
 

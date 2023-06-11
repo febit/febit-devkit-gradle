@@ -43,12 +43,10 @@ public class StandardJavaRegister {
 
     private static final String UTF_8 = "UTF-8";
     private static final String SOURCES = "sources";
-    private static final String JAVADOC = "javadoc";
 
     private static final String GROUP_BUILD = "build";
 
     private static final String TASK_SOURCE_JAR = "sourcesJar";
-    private static final String TASK_JAVADOC_JAR = "javadocJar";
     private static final String TASK_DELOMBOK = "delombok";
 
     private final RunOnce applyOnce = RunOnce.of(this::apply);
@@ -149,17 +147,6 @@ public class StandardJavaRegister {
             task.from(
                     GradleUtils.mainSourceSet(project).getResources(),
                     taskDeLombok.getTarget()
-            );
-        });
-
-        tasks.register(TASK_JAVADOC_JAR, Jar.class, task -> {
-            task.dependsOn(JavaPlugin.JAVADOC_TASK_NAME);
-            task.setGroup(GROUP_BUILD);
-            task.getArchiveClassifier().set(JAVADOC);
-
-            var taskJavadoc = (Javadoc) tasks.getByPath(JavaPlugin.JAVADOC_TASK_NAME);
-            task.from(
-                    taskJavadoc.getDestinationDir()
             );
         });
     }

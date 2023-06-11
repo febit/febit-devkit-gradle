@@ -1,7 +1,7 @@
 pluginManagement {
   repositories {
     maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    maven { url 'https://maven.aliyun.com/repository/central' }
+    maven { url "https://repo.huaweicloud.com/repository/maven/" }
   }
 }
 
