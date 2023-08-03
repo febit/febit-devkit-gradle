@@ -30,7 +30,7 @@ tasks.withType(AbstractPublishToMaven).configureEach {
 
 signing {
   required {
-    publishProperty('sign') == 'true'
+    publishProperty('signing') == 'true'
   }
   sign publishing.publications
 }
@@ -60,7 +60,7 @@ publishing {
       def pass = publishProperty('password')
       if (pass) {
         credentials {
-          username publishProperty('user') as String
+          username publishProperty('username') as String
           password pass as String
         }
       }
@@ -72,6 +72,7 @@ publishing {
       from components.java
     }
   }
+
   afterEvaluate {
     publications.withType(MavenPublication).configureEach {
 
@@ -95,9 +96,7 @@ publishing {
 
 
 def customPom(MavenPom pom) {
-
   pom.with {
-
     name = project.ext.moduleName
     description = project.ext.moduleDescription
     url = 'https://github.com/febit/febit-devkit-gradle'
