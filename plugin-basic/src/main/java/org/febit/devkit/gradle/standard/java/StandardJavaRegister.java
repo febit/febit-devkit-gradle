@@ -39,7 +39,7 @@ import java.util.Map;
 
 @NonNullApi
 @RequiredArgsConstructor(staticName = "of")
-public class StandardJavaRegister {
+class StandardJavaRegister {
 
     private static final String UTF_8 = "UTF-8";
     private static final String SOURCES = "sources";
@@ -49,11 +49,10 @@ public class StandardJavaRegister {
     private static final String TASK_SOURCE_JAR = "sourcesJar";
     private static final String TASK_DELOMBOK = "delombok";
 
+    private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    private final Project project;
-
-    public void register() {
+    void register() {
         project.afterEvaluate(p -> afterProjectEvaluate());
 
         GradleUtils.afterPlugin(project.getPlugins(), JavaBasePlugin.class, applyOnce::runIfNot);
@@ -98,7 +97,6 @@ public class StandardJavaRegister {
     }
 
     private void configJavaTasks() {
-
         var tasks = project.getTasks();
 
         tasks.withType(JavaCompile.class, task -> {

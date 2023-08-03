@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.devkit.gradle.standard.java;
+package org.febit.devkit.gradle.util;
 
-import org.gradle.api.NonNullApi;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
+import lombok.experimental.UtilityClass;
 
-@NonNullApi
-public class StandardJavaPlugin implements Plugin<Project> {
+import javax.annotation.Nullable;
 
-    @Override
-    public void apply(Project parent) {
-        parent.allprojects(project -> {
-            StandardJavaRegister.of(project).register();
-            PomDependencyManagementRegister.of(project).register();
-        });
+@UtilityClass
+public class Defaults {
+
+    public static <T> T nvl(@Nullable T original, T ifAbsent) {
+        return original != null
+                ? original
+                : ifAbsent;
     }
 }

@@ -1,7 +1,7 @@
 plugins {
-  id 'io.freefair.lombok' version '8.0.1'
+  id 'io.freefair.lombok' version '8.1.0'
   id 'com.github.hierynomus.license' version '0.16.1'
-  id 'io.spring.dependency-management' version '1.1.0'
+  id 'io.spring.dependency-management' version '1.1.2'
 }
 
 group 'org.febit.devkit.gradle'
@@ -12,11 +12,11 @@ ext {
       commonsCollections4       : '4.4',
       spotbugs                  : '4.7.3',
       commonsIo                 : '2.13.0',
-      springBoot                : '2.7.12',
+      springBoot                : '2.7.14',
       jsr305                    : '3.0.2',
       assertj                   : '3.24.2',
-      lombokPlugin              : '8.0.1',
-      dependencyManagementPlugin: '1.1.0',
+      lombokPlugin              : '8.1.0',
+      dependencyManagementPlugin: '1.1.2',
   ]
 }
 
@@ -58,7 +58,6 @@ configure(javaLibModules()) {
 
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
-
 
   tasks.withType(Test).configureEach {
     testLogging.events = ["FAILED", "PASSED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"]

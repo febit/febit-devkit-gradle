@@ -2,16 +2,11 @@ apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 def publishProperty(String key) {
-  def profile = findProperty('publish.profile')
+  def profile = findProperty('publish-profile')
   if (profile == null) {
     return null
   }
   return findProperty("publish.${profile}.${key}")
-}
-
-java {
-  // withJavadocJar()
-  withSourcesJar()
 }
 
 tasks.register('install') {
@@ -21,7 +16,7 @@ tasks.register('install') {
 }
 
 // Disabling Gradle Module Metadata publication
-//   see: https://docs.gradle.org/7.0/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
+//   see: https://docs.gradle.org/8.0/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
 tasks.withType(GenerateModuleMetadata).configureEach {
   enabled = false
 }
@@ -35,7 +30,7 @@ tasks.withType(AbstractPublishToMaven).configureEach {
 
 signing {
   required {
-    publishProperty("sign").toString() == 'true'
+    publishProperty('sign') == 'true'
   }
   sign publishing.publications
 }
@@ -43,29 +38,40 @@ signing {
 publishing {
   repositories {
     maven {
-      allowInsecureProtocol = true
-      credentials {
-        username "${publishProperty("username")}"
-        password "${publishProperty("password")}"
+      allowInsecureProtocol = 'true' == publishProperty('allowInsecureProtocol')
+      url = publishProperty('url')
+      if (!url) {
+        url = version.endsWith('-SNAPSHOT')
+            ? publishProperty('snapshotsUrl')
+            : publishProperty('releasesUrl')
       }
-      url = version.endsWith('-SNAPSHOT')
-          ? publishProperty("snapshotsUrl")
-          : publishProperty("releasesUrl")
+
+      def authHeaderToken = publishProperty('auth-header-token')
+      if (authHeaderToken) {
+        authentication {
+          header(HttpHeaderAuthentication)
+        }
+        credentials(HttpHeaderCredentials) {
+          name = publishProperty('auth-header') ?: 'Authorization'
+          value = authHeaderToken
+        }
+      }
+
+      def pass = publishProperty('password')
+      if (pass) {
+        credentials {
+          username publishProperty('user') as String
+          password pass as String
+        }
+      }
     }
   }
 
   publications {
-    if (project.name.endsWith('-bom')) {
-      mavenBom(MavenPublication) {
-        from components.javaPlatform
-      }
-    } else {
-      mavenLib(MavenPublication) {
-        from components.java
-      }
+    mavenLib(MavenPublication) {
+      from components.java
     }
   }
-
   afterEvaluate {
     publications.withType(MavenPublication).configureEach {
 
@@ -82,41 +88,11 @@ publishing {
         }
       }
 
-      standardPom(pom)
       customPom(pom)
     }
   }
 }
 
-def standardPom(MavenPom pom) {
-  def isBom = project.name.endsWith('-bom')
-  def isDeps = project.name.endsWith('-dependencies')
-
-  // packaging
-  if (isBom || isDeps) {
-    pom.packaging = 'pom'
-  }
-
-  if (isDeps) {
-    pom.withXml {
-      def point = asNode().dependencyManagement.dependencies.last().children().first()
-      def projects = rootProject.allprojects.findAll { proj ->
-        proj.name.endsWith("-bom") && plugins.hasPlugin(JavaBasePlugin)
-      }
-      projects.forEach { proj ->
-        point.plus {
-          delegate.dependency {
-            delegate.groupId(proj.group)
-            delegate.artifactId(proj.name)
-            delegate.version(proj.version)
-            delegate.scope('import')
-            delegate.type('pom')
-          }
-        }
-      }
-    }
-  }
-}
 
 def customPom(MavenPom pom) {
 

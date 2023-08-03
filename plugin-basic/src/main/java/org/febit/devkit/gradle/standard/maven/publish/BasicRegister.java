@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.devkit.gradle.standard.java;
+package org.febit.devkit.gradle.standard.maven.publish;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.util.GradleUtils;
@@ -22,23 +22,23 @@ import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
 import org.gradle.api.tasks.bundling.Jar;
 
 @NonNullApi
 @RequiredArgsConstructor(staticName = "of")
-public class StandardMavenPublishRegister {
+class BasicRegister {
 
     private static final String TASK_INSTALL = "install";
     private static final String GROUP_PUBLISHING = "publishing";
-
-    private final RunOnce applyOnce = RunOnce.of(this::apply);
+    private static final String PUB_PLUGIN_MAVEN = "pluginMaven";
 
     private final Project project;
+    private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    public void register() {
+    void register() {
         project.afterEvaluate(p -> afterProjectEvaluate());
-
         GradleUtils.afterPlugin(project.getPlugins(), JavaBasePlugin.class, applyOnce::runIfNot);
     }
 
@@ -51,11 +51,22 @@ public class StandardMavenPublishRegister {
     private void afterProjectEvaluate() {
         applyOnce.ifRan(() -> {
             disableGradleModuleMetadataPublication();
+            disablePluginMavenTasks();
+        });
+    }
+
+    private void disablePluginMavenTasks() {
+        var tasks = project.getTasks();
+        tasks.withType(AbstractPublishToMaven.class).configureEach(task -> {
+            task.onlyIf(spec -> {
+                String pubName = task.getPublication().getName();
+                return !PUB_PLUGIN_MAVEN.equals(pubName);
+            });
         });
     }
 
     private void disableGradleModuleMetadataPublication() {
-        //   see: https://docs.gradle.org/7.0/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
+        // see: https://docs.gradle.org/8.0/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
         project.getTasks().withType(GenerateModuleMetadata.class, task -> {
             task.setEnabled(false);
         });

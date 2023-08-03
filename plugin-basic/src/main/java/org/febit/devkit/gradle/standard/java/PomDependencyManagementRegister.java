@@ -18,6 +18,7 @@ package org.febit.devkit.gradle.standard.java;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.NonNullApi;
@@ -25,15 +26,12 @@ import org.gradle.api.Project;
 
 @NonNullApi
 @RequiredArgsConstructor(staticName = "of")
-public class StandardPomDependencyManagementRegister {
-
-    private static final String SUFFIX_DEPENDENCIES = "-dependencies";
-    private final RunOnce applyOnce = RunOnce.of(this::apply);
+class PomDependencyManagementRegister {
 
     private final Project project;
+    private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    public void register() {
-        project.afterEvaluate(p -> afterProjectEvaluate());
+    void register() {
         GradleUtils.afterPlugin(project.getPlugins(), DependencyManagementPlugin.class, applyOnce::runIfNot);
     }
 
@@ -41,12 +39,7 @@ public class StandardPomDependencyManagementRegister {
         var ext = project.getExtensions()
                 .getByType(DependencyManagementExtension.class);
 
-        var needDepMgmt = project.getName().endsWith(SUFFIX_DEPENDENCIES);
+        var needDepMgmt = StandardUtils.isDependencies(project);
         ext.generatedPomCustomization(h -> h.enabled(needDepMgmt));
     }
-
-    private void afterProjectEvaluate() {
-        // Nothing
-    }
-
 }

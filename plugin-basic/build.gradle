@@ -8,9 +8,17 @@ ext {
 
 gradlePlugin {
   plugins {
-    standardPlugin {
+    standardJavaPlugin {
       id = 'org.febit.standard-java'
       implementationClass = 'org.febit.devkit.gradle.standard.java.StandardJavaPlugin'
+    }
+    standardBomPlugin {
+      id = 'org.febit.standard-bom'
+      implementationClass = 'org.febit.devkit.gradle.standard.bom.StandardBomPlugin'
+    }
+    standardMavenPublishPlugin {
+      id = 'org.febit.standard-maven-publish'
+      implementationClass = 'org.febit.devkit.gradle.standard.maven.publish.StandardMavenPublishPlugin'
     }
     moduleCodegenPlugin {
       id = 'org.febit.codegen-module'

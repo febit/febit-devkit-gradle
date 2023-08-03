@@ -13,20 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.devkit.gradle.standard.java;
+@NonNullApi
+package org.febit.devkit.gradle.standard.util;
 
 import org.gradle.api.NonNullApi;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-
-@NonNullApi
-public class StandardJavaPlugin implements Plugin<Project> {
-
-    @Override
-    public void apply(Project parent) {
-        parent.allprojects(project -> {
-            StandardJavaRegister.of(project).register();
-            PomDependencyManagementRegister.of(project).register();
-        });
-    }
-}
