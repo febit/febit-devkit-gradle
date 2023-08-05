@@ -15,8 +15,6 @@
  */
 package org.febit.devkit.gradle.standard.maven.publish;
 
-import lombok.val;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -24,22 +22,24 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@NonNullApi
 public class StandardMavenPublishPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project parent) {
 
-        val profileRaw = parent.findProperty("publish-profile");
-        val profile = profileRaw == null ? null : profileRaw.toString();
-        val config = extractConfig(profile, parent);
+        var profileRaw = parent.findProperty("publish-profile");
+        var profile = profileRaw == null ? null : profileRaw.toString();
+        var config = extractConfig(profile, parent);
 
         parent.allprojects(project -> {
-            project.getExtensions().create(
+            var extension = project.getExtensions().create(
                     Constants.EXTENSION,
                     StandardMavenPublishExtension.class,
                     profile, config
             );
+            if (!extension.isEnabled()) {
+                return;
+            }
 
             BasicRegister.of(project).register();
             PublicationRegister.of(project, config).register();
@@ -52,8 +52,8 @@ public class StandardMavenPublishPlugin implements Plugin<Project> {
             return Map.of();
         }
 
-        val prefix = "publish." + profile + ".";
-        val map = new HashMap<String, String>();
+        var prefix = "publish." + profile + ".";
+        var map = new HashMap<String, String>();
 
         project.getProperties().forEach((key, value) -> {
             if (!key.startsWith(prefix) || value == null) {

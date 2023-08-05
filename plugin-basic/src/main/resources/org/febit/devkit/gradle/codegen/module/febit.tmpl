@@ -1,0 +1,57 @@
+package ${classPackage};
+
+import org.febit.lang.module.IModule;
+
+import java.time.Instant;
+
+@SuppressWarnings({
+        "squid:S3400" // Methods should not return constants
+})
+public class ${classSimpleName} implements IModule {
+
+    public static String groupId() {
+        return "${groupId}";
+    }
+
+    public static String artifactId() {
+        return "${artifactId}";
+    }
+
+    public static String version() {
+        return "${artifactId}";
+    }
+
+    public static String commitId() {
+        return "${commitId}";
+    }
+
+    public static Instant builtAt() {
+        // At: ${builtAt}
+        return Instant.ofEpochSecond(${builtAt.epochSecond});
+    }
+
+    @Override
+    public String getGroupId() {
+        return groupId();
+    }
+
+    @Override
+    public String getArtifactId() {
+        return artifactId();
+    }
+
+    @Override
+    public String getVersion() {
+        return version();
+    }
+
+    @Override
+    public String getCommitId() {
+        return commitId();
+    }
+
+    @Override
+    public Instant getBuiltAt() {
+        return builtAt();
+    }
+}

@@ -49,15 +49,16 @@ def javaLibModules() {
 }
 
 configure(javaLibModules()) {
-
   apply plugin: 'java-library'
   apply plugin: 'io.freefair.lombok'
   apply plugin: 'io.spring.dependency-management'
 
   apply from: "${rootDir}/gradle/publish-maven.gradle"
 
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
 
   tasks.withType(Test).configureEach {
     testLogging.events = ["FAILED", "PASSED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"]

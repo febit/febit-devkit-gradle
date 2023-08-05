@@ -16,8 +16,8 @@
 package org.febit.devkit.gradle.standard.maven.publish;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.Action;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.MavenPom;
 
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@NonNullApi
 public class StandardMavenPublishExtension {
 
     @Getter
@@ -35,6 +34,10 @@ public class StandardMavenPublishExtension {
 
     @Getter
     private final Map<String, String> config;
+
+    @Getter
+    @Setter
+    private boolean enabled = true;
 
     final List<Consumer<MavenPom>> pomActions = new ArrayList<>();
     final List<Project> importBomProjects = new ArrayList<>();

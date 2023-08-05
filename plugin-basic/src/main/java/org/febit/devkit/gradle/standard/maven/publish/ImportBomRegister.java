@@ -17,10 +17,8 @@ package org.febit.devkit.gradle.standard.maven.publish;
 
 import groovy.util.Node;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPom;
@@ -29,7 +27,6 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
 import java.util.List;
 
-@NonNullApi
 @RequiredArgsConstructor(staticName = "of")
 class ImportBomRegister {
 
@@ -55,7 +52,7 @@ class ImportBomRegister {
 
     private void afterProjectEvaluate() {
         applyOnce.ifRan(() -> {
-            val extension = project.getExtensions()
+            var extension = project.getExtensions()
                     .getByType(StandardMavenPublishExtension.class);
 
             if (extension.importBomProjects.isEmpty()) {
@@ -73,12 +70,12 @@ class ImportBomRegister {
 
     private void importBom(MavenPom pom, List<Project> projects) {
         pom.withXml(xml -> {
-            val dependencies = ensureChild(
+            var dependencies = ensureChild(
                     ensureChild(xml.asNode(), N_DEPENDENCY_MANAGEMENT),
                     N_DEPENDENCIES
             );
             projects.forEach(proj -> {
-                val n = dependencies.appendNode(N_DEPENDENCY);
+                var n = dependencies.appendNode(N_DEPENDENCY);
                 n.appendNode(N_GROUP_ID, proj.getGroup());
                 n.appendNode(N_ARTIFACT_ID, proj.getName());
                 n.appendNode(N_VERSION, proj.getVersion());
@@ -89,7 +86,7 @@ class ImportBomRegister {
     }
 
     private Node ensureChild(Node parent, String name) {
-        for (val child : parent.children()) {
+        for (var child : parent.children()) {
             if ((child instanceof Node)
                     && ((Node) child).name().equals(name)) {
                 return (Node) child;

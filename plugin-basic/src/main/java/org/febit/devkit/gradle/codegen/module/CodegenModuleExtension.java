@@ -16,15 +16,26 @@
 package org.febit.devkit.gradle.codegen.module;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodegenModuleExtension {
 
     private static final String CODEGEN_MODULE = "codegen-module";
+
+    public static final String BUILD_IN_TMPL_PREFIX = "/org/febit/devkit/gradle/codegen/module/";
+    public static final String DEFAULT_TMPL = BUILD_IN_TMPL_PREFIX + "default.tmpl";
+    public static final String FEBIT_TMPL = BUILD_IN_TMPL_PREFIX + "febit.tmpl";
 
     @Getter
     @Setter
@@ -39,14 +50,55 @@ public class CodegenModuleExtension {
     private File generatedResourceDir;
 
     @Getter
-    @Setter
-    private String moduleClassName;
+    private final List<ModuleEntry> modules = new ArrayList<>();
 
     @Inject
     public CodegenModuleExtension(Project project) {
         this.gitDir = new File(project.getRootDir(), ".git");
-        this.generatedSourceDir = new File(project.getBuildDir(), "generated/sources/" + CODEGEN_MODULE);
-        this.generatedResourceDir = new File(project.getBuildDir(), "generated/resources/" + CODEGEN_MODULE);
+        this.generatedSourceDir = new File(project.getBuildDir(),
+                "generated/sources/" + CODEGEN_MODULE);
+        this.generatedResourceDir = new File(project.getBuildDir(),
+                "generated/resources/" + CODEGEN_MODULE);
+    }
+
+    public void module(String name) {
+        module(name, fromClasspath(DEFAULT_TMPL));
+    }
+
+    public void module(String name, TemplateResolver tmpl) {
+        modules.add(
+                ModuleEntry.of(name, tmpl)
+        );
+    }
+
+    public TemplateResolver febitTmpl() {
+        return fromClasspath(FEBIT_TMPL);
+    }
+
+    public TemplateResolver fromClasspath(String name) {
+        return () -> IOUtils.resourceToString(name, StandardCharsets.UTF_8);
+    }
+
+    public TemplateResolver fromFile(String path) {
+        return fromFile(new File(path));
+    }
+
+    public TemplateResolver fromFile(File path) {
+        return () -> FileUtils.readFileToString(path, StandardCharsets.UTF_8);
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor(staticName = "of")
+    public static class ModuleEntry {
+        private final String name;
+        private final TemplateResolver template;
+    }
+
+    @FunctionalInterface
+    public interface TemplateResolver {
+
+        String resolve() throws IOException;
     }
 }
 

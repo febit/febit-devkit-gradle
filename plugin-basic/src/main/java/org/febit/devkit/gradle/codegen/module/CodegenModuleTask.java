@@ -15,15 +15,22 @@
  */
 package org.febit.devkit.gradle.codegen.module;
 
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.febit.devkit.gradle.util.FileExtraUtils;
 import org.febit.devkit.gradle.util.GitUtils;
-import org.febit.devkit.gradle.util.GradleUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CodegenModuleTask extends DefaultTask {
 
@@ -42,60 +49,66 @@ public class CodegenModuleTask extends DefaultTask {
     }
 
     private void emitModuleClass(CodegenModuleExtension extension) {
+        extension.getModules().forEach(entry ->
+                emitModuleClass(extension, entry)
+        );
+    }
 
-        var classFullName = extension.getModuleClassName();
+    private Template loadTemplate(CodegenModuleExtension.ModuleEntry entry) {
+        var tmplEngine = new SimpleTemplateEngine();
+        try {
+            var text = entry.getTemplate().resolve();
+            return tmplEngine.createTemplate(text);
+        } catch (ClassNotFoundException | IOException e) {
+            throw new GradleException(
+                    "Cannot resolve template for module'" + entry.getName() + "'.", e);
+        }
+    }
+
+    private void emitModuleClass(CodegenModuleExtension extension, CodegenModuleExtension.ModuleEntry entry) {
+        var classFullName = entry.getName();
         if (StringUtils.isEmpty(classFullName)) {
-            GradleUtils.println("WARN: Skip generation of module class, "
-                    + "since 'moduleClassName' option is absent in [" + Constants.EXTENSION + "]");
+            return;
+        }
+        if (!classFullName.contains(".")) {
+            throw new GradleException("Module name should be a FULL class name,"
+                    + " default package is not supported.");
         }
 
-        var pkg = classFullName.contains(".")
-                ? StringUtils.substringBeforeLast(classFullName, ".")
-                : null;
+        var pkg = StringUtils.substringBeforeLast(classFullName, ".");
         var classSimpleName = classFullName.contains(".")
                 ? StringUtils.substringAfterLast(classFullName, ".")
                 : classFullName;
 
         var proj = getProject();
         var commitId = GitUtils.resolveHeadCommitId(extension.getGitDir());
-        var builtAtSec = System.currentTimeMillis() / 1000;
+        var builtAt = Instant.ofEpochSecond(
+                System.currentTimeMillis() / 1000
+        );
 
-        var buf = new StringBuilder();
-        if (pkg != null) {
-            buf.append("package ")
-                    .append(pkg)
-                    .append(";\n\n");
+        var params = Map.of(
+                "classPackage", pkg,
+                "classFullName", classFullName,
+                "classSimpleName", classSimpleName,
+                "builtAt", builtAt,
+                "commitId", commitId,
+                "groupId", proj.getGroup(),
+                "artifactId", proj.getName(),
+                "version", proj.getVersion()
+        );
+
+        var buf = new StringWriter();
+
+        try {
+            loadTemplate(entry)
+                    .make(new HashMap<>(params))
+                    .writeTo(buf);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
 
-        buf.append("import java.time.Instant;\n");
-        buf.append("\n");
-
-        buf.append("@SuppressWarnings({\n"
-                + "        \"squid:S3400\" // Methods should not return constants\n"
-                + "})\n");
-        buf.append("public class ").append(classSimpleName).append(" {").append("\n")
-                .append("\n");
-
-        buf.append("    public static String groupId() {\n")
-                .append("        return \"").append(proj.getGroup()).append("\";\n")
-                .append("    }\n\n")
-                .append("    public static String artifactId() {\n")
-                .append("        return \"").append(proj.getName()).append("\";\n")
-                .append("    }\n\n")
-                .append("    public static String version() {\n")
-                .append("        return \"").append(proj.getVersion()).append("\";\n")
-                .append("    }\n\n")
-                .append("    public static String commitId() {\n")
-                .append("        return \"").append(commitId).append("\";\n")
-                .append("    }\n\n")
-                .append("    public static Instant builtAt() {\n")
-                .append("        // At: ").append(Instant.ofEpochSecond(builtAtSec)).append("\n")
-                .append("        return Instant.ofEpochSecond(").append(builtAtSec).append("L);\n")
-                .append("    }\n\n");
-        buf.append("}\n");
-
         var srcDir = extension.getGeneratedSourceDir();
-        FileExtraUtils.writeJavaClass(srcDir, pkg, classSimpleName, buf);
+        FileExtraUtils.writeJavaClass(srcDir, pkg, classSimpleName, buf.toString());
     }
 
 }

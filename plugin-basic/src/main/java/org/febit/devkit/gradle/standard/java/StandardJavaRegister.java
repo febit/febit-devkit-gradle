@@ -21,7 +21,6 @@ import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
@@ -37,7 +36,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@NonNullApi
 @RequiredArgsConstructor(staticName = "of")
 class StandardJavaRegister {
 
@@ -60,7 +58,7 @@ class StandardJavaRegister {
 
     private void apply() {
         applySubPlugins();
-        addExtraJarTasks();
+        applySourceJarTask();
     }
 
     private void afterProjectEvaluate() {
@@ -109,7 +107,7 @@ class StandardJavaRegister {
             ));
         });
 
-        tasks.named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
+        tasks.withType(Javadoc.class, javadoc -> {
             var options = javadoc.getOptions();
             options.setEncoding(UTF_8);
             if (options instanceof CoreJavadocOptions) {
@@ -133,7 +131,7 @@ class StandardJavaRegister {
                 });
     }
 
-    private void addExtraJarTasks() {
+    private void applySourceJarTask() {
         var tasks = project.getTasks();
 
         tasks.register(TASK_SOURCE_JAR, Jar.class, task -> {

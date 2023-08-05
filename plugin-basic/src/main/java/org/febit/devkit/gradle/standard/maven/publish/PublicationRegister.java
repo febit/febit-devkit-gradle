@@ -16,12 +16,10 @@
 package org.febit.devkit.gradle.standard.maven.publish;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.credentials.HttpHeaderCredentials;
@@ -33,12 +31,12 @@ import org.gradle.api.publish.VersionMappingStrategy;
 import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.authentication.http.HttpHeaderAuthentication;
 import org.gradle.plugins.signing.SigningExtension;
 
 import java.util.Map;
 
-@NonNullApi
 @RequiredArgsConstructor(staticName = "of")
 public class PublicationRegister {
 
@@ -54,7 +52,7 @@ public class PublicationRegister {
     public void register() {
         project.afterEvaluate(p -> afterProjectEvaluate());
 
-        val plugins = project.getPlugins();
+        var plugins = project.getPlugins();
         plugins.apply("signing");
         plugins.apply("maven-publish");
 
@@ -64,7 +62,7 @@ public class PublicationRegister {
     }
 
     private void applyIfReady() {
-        val plugins = project.getPlugins();
+        var plugins = project.getPlugins();
         if (!plugins.hasPlugin(MavenPublishPlugin.class)) {
             return;
         }
@@ -77,19 +75,19 @@ public class PublicationRegister {
     }
 
     private void apply() {
-        configSigning();
+        applySigning();
 
-        val publishing = project.getExtensions()
+        var publishing = project.getExtensions()
                 .getByType(PublishingExtension.class);
 
-        publishing.publications(this::configPublications);
-        publishing.getRepositories().maven(this::configMaven);
+        publishing.publications(this::applyPublications);
+        publishing.getRepositories().maven(this::applyMavenRepo);
     }
 
-    private void configSigning() {
-        val signing = project.getExtensions()
+    private void applySigning() {
+        var signing = project.getExtensions()
                 .getByType(SigningExtension.class);
-        val publishing = project.getExtensions()
+        var publishing = project.getExtensions()
                 .getByType(PublishingExtension.class);
 
         signing.setRequired(
@@ -98,12 +96,12 @@ public class PublicationRegister {
         signing.sign(publishing.getPublications());
     }
 
-    private void configMaven(MavenArtifactRepository maven) {
+    private void applyMavenRepo(MavenArtifactRepository maven) {
         if ("true".equals(config.get("allowInsecureProtocol"))) {
             maven.setAllowInsecureProtocol(true);
         }
 
-        val url = config.getOrDefault(
+        var url = config.getOrDefault(
                 StandardUtils.isSnapshot(project)
                         ? "snapshotsUrl"
                         : "releasesUrl",
@@ -113,18 +111,18 @@ public class PublicationRegister {
             maven.setUrl(url);
         }
 
-        val authHeaderToken = config.get("auth-header-token");
+        var authHeaderToken = config.get("auth-header-token");
         if (StringUtils.isNotEmpty(authHeaderToken)) {
             maven.getAuthentication()
                     .create("header", HttpHeaderAuthentication.class);
-            val credentials = maven.getCredentials(HttpHeaderCredentials.class);
+            var credentials = maven.getCredentials(HttpHeaderCredentials.class);
             credentials.setName(
                     config.getOrDefault("auth-header", "Authorization")
             );
             credentials.setValue(authHeaderToken);
         }
 
-        val password = config.get("password");
+        var password = config.get("password");
         if (StringUtils.isNotEmpty(password)) {
             var credentials = maven.getCredentials();
             credentials.setUsername(config.get("username"));
@@ -132,11 +130,11 @@ public class PublicationRegister {
         }
     }
 
-    private void configPublications(PublicationContainer publications) {
-        val components = project.getComponents();
+    private void applyPublications(PublicationContainer publications) {
+        var components = project.getComponents();
 
-        val platformComp = components.findByName("javaPlatform");
-        val javaComp = components.findByName("java");
+        var platformComp = components.findByName("javaPlatform");
+        var javaComp = components.findByName("java");
 
         if (platformComp == null && javaComp == null) {
             return;
@@ -149,6 +147,7 @@ public class PublicationRegister {
 
     private void afterProjectEvaluate() {
         applyOnce.ifRan(() -> {
+            tasksOnlyIfEnabled();
             project.getExtensions()
                     .getByType(PublishingExtension.class)
                     .getPublications()
@@ -160,8 +159,23 @@ public class PublicationRegister {
         });
     }
 
+    private void tasksOnlyIfEnabled() {
+        var tasks = project.getTasks();
+        tasks.withType(AbstractPublishToMaven.class).configureEach(task -> {
+            task.onlyIf(spec -> {
+                var pub = task.getPublication();
+                if (!PUBLICATION_NAME.equals(pub.getName())) {
+                    return true;
+                }
+                return project.getExtensions()
+                        .getByType(StandardMavenPublishExtension.class)
+                        .isEnabled();
+            });
+        });
+    }
+
     private void configVersionMapping(VersionMappingStrategy mapping) {
-        val hasRuntimeClasspath = project.getConfigurations()
+        var hasRuntimeClasspath = project.getConfigurations()
                 .getNames().contains(RUNTIME_CLASSPATH);
 
         if (!hasRuntimeClasspath) {

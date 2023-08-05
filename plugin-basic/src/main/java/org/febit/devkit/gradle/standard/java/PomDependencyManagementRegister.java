@@ -21,10 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 
-@NonNullApi
 @RequiredArgsConstructor(staticName = "of")
 class PomDependencyManagementRegister {
 

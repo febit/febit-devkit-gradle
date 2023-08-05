@@ -15,11 +15,9 @@
  */
 package org.febit.devkit.gradle.standard.bom;
 
-import lombok.val;
 import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -29,7 +27,6 @@ import java.util.Comparator;
 
 import static org.febit.devkit.gradle.util.Defaults.nvl;
 
-@NonNullApi
 public class StandardBomPlugin implements Plugin<Project> {
 
     private static final String CONF_API = "api";
@@ -45,15 +42,15 @@ public class StandardBomPlugin implements Plugin<Project> {
                     "name of BOM module should end with '-bom', but now is '" + project.getName() + "'");
         }
 
-        val plugins = project.getPlugins();
+        var plugins = project.getPlugins();
         plugins.apply(JavaPlatformPlugin.class);
 
         GradleUtils.afterPlugin(plugins, JavaPlatformPlugin.class, applyOnce::runIfNot);
     }
 
     private void apply() {
-        val constraints = project.getDependencies().getConstraints();
-        val subProjects = nvl(project.getParent(), project)
+        var constraints = project.getDependencies().getConstraints();
+        var subProjects = nvl(project.getParent(), project)
                 .getSubprojects();
 
         subProjects.stream()
