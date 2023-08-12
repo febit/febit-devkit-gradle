@@ -23,13 +23,10 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
-import org.gradle.api.tasks.bundling.Jar;
 
 @RequiredArgsConstructor(staticName = "of")
 class BasicRegister {
 
-    private static final String TASK_INSTALL = "install";
-    private static final String GROUP_PUBLISHING = "publishing";
     private static final String PUB_PLUGIN_MAVEN = "pluginMaven";
 
     private final Project project;
@@ -43,7 +40,6 @@ class BasicRegister {
     private void apply() {
         var plugins = project.getPlugins();
         plugins.apply(MavenPublishPlugin.class);
-        addTasks();
     }
 
     private void afterProjectEvaluate() {
@@ -70,13 +66,5 @@ class BasicRegister {
         });
     }
 
-    private void addTasks() {
-        var tasks = project.getTasks();
-
-        tasks.register(TASK_INSTALL, Jar.class, task -> {
-            task.dependsOn(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME);
-            task.setGroup(GROUP_PUBLISHING);
-        });
-    }
 
 }

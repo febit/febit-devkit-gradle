@@ -33,7 +33,7 @@ allprojects {
     include '**/*.java'
     strictCheck false
     skipExistingHeaders false
-    header rootProject.file('etc/licenseheader.txt')
+    header rootProject.file('etc/license-header.txt')
   }
 
   repositories {
@@ -88,6 +88,7 @@ configure(javaLibModules()) {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.mockito:mockito-junit-jupiter'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
 
   dependencyManagement {

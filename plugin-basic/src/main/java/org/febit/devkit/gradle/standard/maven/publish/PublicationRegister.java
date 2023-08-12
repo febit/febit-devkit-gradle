@@ -32,6 +32,7 @@ import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
+import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.authentication.http.HttpHeaderAuthentication;
 import org.gradle.plugins.signing.SigningExtension;
 
@@ -42,6 +43,9 @@ public class PublicationRegister {
 
     private static final String RUNTIME_CLASSPATH = "runtimeClasspath";
     private static final String PUBLICATION_NAME = "mavenArtifact";
+
+    private static final String TASK_INSTALL = "install";
+    private static final String GROUP_PUBLISHING = "publishing";
 
     private final Project project;
 
@@ -82,6 +86,7 @@ public class PublicationRegister {
 
         publishing.publications(this::applyPublications);
         publishing.getRepositories().maven(this::applyMavenRepo);
+        addTasks();
     }
 
     private void applySigning() {
@@ -156,6 +161,15 @@ public class PublicationRegister {
                         maven.pom(this::pomPackaging);
                         maven.pom(this::pomActions);
                     });
+        });
+    }
+
+    private void addTasks() {
+        var tasks = project.getTasks();
+
+        tasks.register(TASK_INSTALL, Jar.class, task -> {
+            task.dependsOn(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME);
+            task.setGroup(GROUP_PUBLISHING);
         });
     }
 

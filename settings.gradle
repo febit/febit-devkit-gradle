@@ -1,23 +1,22 @@
 pluginManagement {
   repositories {
     maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    maven { url "https://repo.huaweicloud.com/repository/maven/" }
+    maven { url "https://repo.huaweicloud.com/repository/maven" }
   }
 }
 
 rootProject.name = 'febit-devkit-gradle'
 
-subModule 'common'
+sub 'common'
+plugin 'basic'
 
-gradleModule 'basic'
-
-def subModule(String name) {
+def sub(String name) {
   String fullName = ":febit-gradle-${name}"
   include fullName
   project(fullName).projectDir = file("${name}")
 }
 
-def gradleModule(String name) {
+def plugin(String name) {
   def fullName = ':febit-gradle-' + name + '-plugin'
   include fullName
   project(fullName).projectDir = file("plugin-${name}")
