@@ -33,9 +33,11 @@ public class CodegenModuleExtension {
 
     private static final String CODEGEN_MODULE = "codegen-module";
 
-    public static final String BUILD_IN_TMPL_PREFIX = "/org/febit/devkit/gradle/codegen/module/";
-    public static final String DEFAULT_TMPL = BUILD_IN_TMPL_PREFIX + "default.tmpl";
-    public static final String FEBIT_TMPL = BUILD_IN_TMPL_PREFIX + "febit.tmpl";
+    private static final String BUILD_IN_TMPL_PREFIX = "/org/febit/devkit/gradle/codegen/module/";
+    private static final String DEFAULT_TMPL = BUILD_IN_TMPL_PREFIX + "default.tmpl";
+    private static final String FEBIT_TMPL = BUILD_IN_TMPL_PREFIX + "febit.tmpl";
+
+    private static final TemplateResolver DEFAULT_TMPL_RESOLVER = fromClasspath(DEFAULT_TMPL);
 
     @Getter
     @Setter
@@ -50,6 +52,10 @@ public class CodegenModuleExtension {
     private File generatedResourceDir;
 
     @Getter
+    @Setter
+    private TemplateResolver defaultTemplate = DEFAULT_TMPL_RESOLVER;
+
+    @Getter
     private final List<ModuleEntry> modules = new ArrayList<>();
 
     @Inject
@@ -62,7 +68,7 @@ public class CodegenModuleExtension {
     }
 
     public void module(String name) {
-        module(name, fromClasspath(DEFAULT_TMPL));
+        module(name, defaultTemplate);
     }
 
     public void module(String name, TemplateResolver tmpl) {
@@ -71,20 +77,20 @@ public class CodegenModuleExtension {
         );
     }
 
-    public TemplateResolver febitTmpl() {
+    public static TemplateResolver febitTmpl() {
         return fromClasspath(FEBIT_TMPL);
     }
 
-    public TemplateResolver fromClasspath(String name) {
-        return () -> IOUtils.resourceToString(name, StandardCharsets.UTF_8);
+    public static TemplateResolver fromClasspath(String name) {
+        return caching(() -> IOUtils.resourceToString(name, StandardCharsets.UTF_8));
     }
 
-    public TemplateResolver fromFile(String path) {
+    public static TemplateResolver fromFile(String path) {
         return fromFile(new File(path));
     }
 
-    public TemplateResolver fromFile(File path) {
-        return () -> FileUtils.readFileToString(path, StandardCharsets.UTF_8);
+    public static TemplateResolver fromFile(File path) {
+        return caching(() -> FileUtils.readFileToString(path, StandardCharsets.UTF_8));
     }
 
     @Getter
@@ -99,6 +105,29 @@ public class CodegenModuleExtension {
     public interface TemplateResolver {
 
         String resolve() throws IOException;
+    }
+
+    private static TemplateResolver caching(TemplateResolver resolver) {
+        return CachingTemplateResolver.caching(resolver);
+    }
+
+    @RequiredArgsConstructor(staticName = "caching")
+    public static class CachingTemplateResolver implements TemplateResolver {
+
+        private final TemplateResolver delegated;
+
+        private String resolved;
+
+        @Override
+        public String resolve() throws IOException {
+            String resolved = this.resolved;
+            if (resolved != null) {
+                return resolved;
+            }
+            resolved = delegated.resolve();
+            this.resolved = resolved;
+            return resolved;
+        }
     }
 }
 
