@@ -8,6 +8,7 @@ dependencies {
   compileOnly gradleApi()
 
   api 'commons-io:commons-io'
+  api 'org.apache.commons:commons-lang3'
   api 'org.apache.commons:commons-collections4'
 
   testImplementation localGroovy()

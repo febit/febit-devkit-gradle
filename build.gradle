@@ -9,9 +9,9 @@ version '1.1.0-SNAPSHOT'
 
 ext {
   versions = [
+      commonsIo: '2.13.0',
       commonsCollections4       : '4.4',
       spotbugs                  : '4.7.3',
-      commonsIo                 : '2.13.0',
       springBoot                : '2.7.14',
       jsr305                    : '3.0.2',
       assertj                   : '3.24.2',

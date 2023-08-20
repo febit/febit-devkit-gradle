@@ -16,7 +16,7 @@
 package org.febit.devkit.gradle.util;
 
 import lombok.experimental.UtilityClass;
-import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
