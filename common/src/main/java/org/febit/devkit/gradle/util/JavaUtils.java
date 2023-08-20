@@ -15,12 +15,15 @@
  */
 package org.febit.devkit.gradle.util;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
+import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Nullable;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.AnnotatedElement;
 import java.util.Set;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class JavaUtils {
 
     private static final Set<String> KEYWORDS = Set.of(
@@ -85,4 +88,49 @@ public class JavaUtils {
         return KEYWORDS.contains(word);
     }
 
+    public static String pkg(String fullName) {
+        return StringUtils.substringBeforeLast(fullName, ".");
+    }
+
+    public static String classSimpleName(String fullName) {
+        return StringUtils.substringAfterLast(fullName, ".");
+    }
+
+    public static boolean isDeprecated(@Nullable AnnotatedElement element) {
+        return element != null && element.isAnnotationPresent(Deprecated.class);
+    }
+
+    public static boolean isDeprecated(@Nullable PropertyDescriptor prop) {
+        if (prop == null) {
+            return false;
+        }
+        return isDeprecated(prop.getReadMethod())
+                || isDeprecated(prop.getWriteMethod());
+    }
+
+    public static boolean isInPackage(String cls, String pkg) {
+        int pkgLen = pkg.length();
+        if (cls.length() <= pkgLen) {
+            return false;
+        }
+        if (cls.charAt(pkgLen) != '.') {
+            return false;
+        }
+        if (!cls.startsWith(pkg)) {
+            return false;
+        }
+        return cls.indexOf('.', pkgLen + 1) < 0;
+    }
+
+    public static Class<?> resolveFinalComponentType(Class<?> cls) {
+        if (!cls.isArray()) {
+            return cls;
+        }
+        return resolveFinalComponentType(cls.getComponentType());
+    }
+
+    public static String upperFirst(String ident) {
+        return ident.substring(0, 1).toUpperCase()
+                + ident.substring(1);
+    }
 }

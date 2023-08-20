@@ -55,10 +55,10 @@ public class CodegenModulePlugin implements Plugin<Project> {
         main.getResources().srcDir(resourceDir);
 
         var tasks = project.getTasks();
-        tasks.register(Constants.TASK_CODEGEN, CodegenModuleTask.class);
+        tasks.register(Constants.TASK_GENERATE_MODULE, CodegenModuleTask.class);
 
         tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, task -> {
-            task.dependsOn(Constants.TASK_CODEGEN);
+            task.dependsOn(Constants.TASK_GENERATE_MODULE);
         });
     }
 

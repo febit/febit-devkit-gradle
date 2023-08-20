@@ -23,5 +23,5 @@ class Constants {
 
     static final String EXTENSION = "codegenModule";
     static final String GROUP = "codegen";
-    static final String TASK_CODEGEN = "codegenModule";
+    static final String TASK_GENERATE_MODULE = "generateModule";
 }
