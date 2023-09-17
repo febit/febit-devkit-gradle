@@ -34,6 +34,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.authentication.http.HttpHeaderAuthentication;
+import org.gradle.plugins.signing.Sign;
 import org.gradle.plugins.signing.SigningExtension;
 
 import java.util.Map;
@@ -96,9 +97,13 @@ public class PublicationRegister {
                 .getByType(PublishingExtension.class);
 
         signing.setRequired(
-                "true".equals(config.get("signing"))
+                isSingingRequired()
         );
         signing.sign(publishing.getPublications());
+    }
+
+    private boolean isSingingRequired() {
+        return "true".equals(config.get("signing"));
     }
 
     private void applyMavenRepo(MavenArtifactRepository maven) {
@@ -153,6 +158,7 @@ public class PublicationRegister {
     private void afterProjectEvaluate() {
         applyOnce.ifRan(() -> {
             tasksOnlyIfEnabled();
+            publishMustRunAfterSigning();
             project.getExtensions()
                     .getByType(PublishingExtension.class)
                     .getPublications()
@@ -162,6 +168,17 @@ public class PublicationRegister {
                         maven.pom(this::pomActions);
                     });
         });
+    }
+
+    private void publishMustRunAfterSigning() {
+        if (!isSingingRequired()) {
+            return;
+        }
+        var tasks = project.getTasks();
+        var signingTasks = tasks.withType(Sign.class);
+        tasks.withType(AbstractPublishToMaven.class).configureEach(
+                task -> task.mustRunAfter(signingTasks)
+        );
     }
 
     private void addTasks() {
