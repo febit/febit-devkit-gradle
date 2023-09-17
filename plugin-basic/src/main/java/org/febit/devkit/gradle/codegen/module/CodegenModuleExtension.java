@@ -61,9 +61,11 @@ public class CodegenModuleExtension {
     @Inject
     public CodegenModuleExtension(Project project) {
         this.gitDir = new File(project.getRootDir(), ".git");
-        this.generatedSourceDir = new File(project.getBuildDir(),
+
+        var buildDir = project.getLayout().getBuildDirectory().getAsFile().get();
+        this.generatedSourceDir = new File(buildDir,
                 "generated/sources/" + CODEGEN_MODULE);
-        this.generatedResourceDir = new File(project.getBuildDir(),
+        this.generatedResourceDir = new File(buildDir,
                 "generated/resources/" + CODEGEN_MODULE);
     }
 
