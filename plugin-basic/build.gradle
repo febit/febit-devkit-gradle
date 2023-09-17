@@ -1,27 +1,35 @@
 apply plugin: 'java-gradle-plugin'
 
+description = 'Devkit basic plugins'
+
 ext {
   withoutMavenJavaPublications = true
-  moduleName = 'Standard Java'
-  moduleDescription = ''
 }
 
 gradlePlugin {
   plugins {
     standardJavaPlugin {
       id = 'org.febit.standard-java'
+      displayName = 'Febit Standard Java Plugin'
+      description = 'Standard Java projects'
       implementationClass = 'org.febit.devkit.gradle.standard.java.StandardJavaPlugin'
     }
     standardBomPlugin {
       id = 'org.febit.standard-bom'
+      displayName = 'Febit Standard Bom Plugin'
+      description = 'Standard BOM projects'
       implementationClass = 'org.febit.devkit.gradle.standard.bom.StandardBomPlugin'
     }
     standardMavenPublishPlugin {
       id = 'org.febit.standard-maven-publish'
+      displayName = 'Febit Standard Maven Publish Plugin'
+      description = 'Standard maven publication'
       implementationClass = 'org.febit.devkit.gradle.standard.maven.publish.StandardMavenPublishPlugin'
     }
     moduleCodegenPlugin {
       id = 'org.febit.codegen-module'
+      displayName = 'Febit Codegen Module Plugin'
+      description = 'Generate module java classes'
       implementationClass = 'org.febit.devkit.gradle.codegen.module.CodegenModulePlugin'
     }
   }

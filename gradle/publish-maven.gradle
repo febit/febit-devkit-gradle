@@ -103,8 +103,8 @@ publishing {
 
 def customPom(MavenPom pom) {
   pom.with {
-    name = project.ext.moduleName
-    description = project.ext.moduleDescription
+    name = project.name
+    description = project.description
     url = 'https://github.com/febit/febit-devkit-gradle'
     organization {
       name = 'Febit'

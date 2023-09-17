@@ -1,7 +1,4 @@
-ext {
-  moduleName = 'Common'
-  moduleDescription = ''
-}
+description = 'Common utils for gradle plugins'
 
 dependencies {
   compileOnly localGroovy()
