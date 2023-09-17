@@ -1,3 +1,5 @@
+import java.time.Instant
+
 plugins {
   id 'io.freefair.lombok' version '8.3'
   id 'com.github.hierynomus.license' version '0.16.1'
@@ -74,6 +76,20 @@ configure(javaLibModules()) {
   tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
+  }
+
+  tasks.withType(Jar).configureEach {
+    manifest {
+      attributes([
+          "Build-Jdk"               : System.getProperty("java.version"),
+          "Build-Jdk-Spec"          : java.targetCompatibility.toString(),
+          "Build-Time"              : Instant.ofEpochSecond(System.currentTimeMillis() / 1000 as long).toString(),
+          "Created-By"              : "Gradle " + project.getGradle().getGradleVersion(),
+          "Implementation-Title"    : project.getName(),
+          "Implementation-Vendor-Id": project.getGroup().toString(),
+          "Implementation-Version"  : project.getVersion().toString()
+      ])
+    }
   }
 
   test {

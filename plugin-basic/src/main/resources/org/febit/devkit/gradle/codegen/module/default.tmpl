@@ -23,8 +23,8 @@ public class ${classSimpleName} {
         return "${commitId}";
     }
 
-    public static Instant builtAt() {
-        // At: ${builtAt}
-        return Instant.ofEpochSecond(${builtAt.epochSecond});
+    public static Instant buildTime() {
+        // ${buildTime}
+        return Instant.ofEpochSecond(${buildTime.epochSecond}L);
     }
 }

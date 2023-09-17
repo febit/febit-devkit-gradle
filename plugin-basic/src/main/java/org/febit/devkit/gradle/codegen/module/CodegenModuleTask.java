@@ -82,7 +82,7 @@ public class CodegenModuleTask extends DefaultTask {
 
         var proj = getProject();
         var commitId = GitUtils.resolveHeadCommitId(extension.getGitDir());
-        var builtAt = Instant.ofEpochSecond(
+        var buildTime = Instant.ofEpochSecond(
                 System.currentTimeMillis() / 1000
         );
 
@@ -90,7 +90,8 @@ public class CodegenModuleTask extends DefaultTask {
                 "classPackage", pkg,
                 "classFullName", classFullName,
                 "classSimpleName", classSimpleName,
-                "builtAt", builtAt,
+                "buildTime", buildTime,
+                "buildJdk", System.getProperty("java.version"),
                 "commitId", commitId,
                 "groupId", proj.getGroup(),
                 "artifactId", proj.getName(),

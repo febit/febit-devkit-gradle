@@ -19,11 +19,13 @@ import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.util.GitUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.VerificationTask;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -32,9 +34,11 @@ import org.gradle.api.tasks.testing.Test;
 import org.gradle.external.javadoc.CoreJavadocOptions;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @RequiredArgsConstructor(staticName = "of")
 class StandardJavaRegister {
@@ -82,14 +86,25 @@ class StandardJavaRegister {
             return;
         }
         var jar = (Jar) task;
-        var attrs = Map.of(
+        var buildTime = Instant.ofEpochSecond(
+                System.currentTimeMillis() / 1000
+        );
+        var commitId = GitUtils.resolveHeadCommitId(new File(project.getRootDir(), ".git"));
+        var javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+
+        var attrs = new TreeMap<>(Map.of(
                 "Build-Jdk", System.getProperty("java.version"),
-                "Build-Time", Instant.now().toString(),
-                "Created-By", "Gradle " + project.getGradle().getGradleVersion(),
+                "Build-Jdk-Spec", javaExtension.getTargetCompatibility().toString(),
+                "Build-Revision", commitId,
+                "Build-Time", buildTime.toString(),
+                "Created-By", "Gradle " + project.getGradle().getGradleVersion()
+        ));
+
+        attrs.putAll(Map.of(
                 "Implementation-Title", project.getName(),
                 "Implementation-Vendor-Id", project.getGroup().toString(),
                 "Implementation-Version", project.getVersion().toString()
-        );
+        ));
 
         jar.getManifest().attributes(attrs);
     }
