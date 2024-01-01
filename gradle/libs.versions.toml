@@ -1,0 +1,35 @@
+[versions]
+commons-collections4 = '4.4'
+commons-io = '2.15.1'
+commons-lang3 = '3.14.0'
+hierynomus-license = '0.16.1'
+jsr305 = '3.0.2'
+slf4j = '2.0.9'
+spotbugs = '4.8.3'
+
+junit = '5.10.1'
+junit-platform = '1.10.1'
+mockito = '5.8.0'
+
+freefair-lombok = '8.4'
+dependency-management = '1.1.4'
+
+[libraries]
+commons-collections4 = { module = 'org.apache.commons:commons-collections4', version.ref = 'commons-collections4' }
+commons-io = { module = 'commons-io:commons-io', version.ref = 'commons-io' }
+commons-lang3 = { module = 'org.apache.commons:commons-lang3', version.ref = 'commons-lang3' }
+jsr305 = { module = 'com.google.code.findbugs:jsr305', version.ref = 'jsr305' }
+slf4j-api = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j' }
+spotbugs-annotations = { module = 'com.github.spotbugs:spotbugs-annotations', version.ref = 'spotbugs' }
+
+jupiter-api = { module = 'org.junit.jupiter:junit-jupiter-api', version.ref = 'junit' }
+jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version.ref = 'junit' }
+junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher', version.ref = 'junit-platform' }
+mockito-junit-jupiter = { module = 'org.mockito:mockito-junit-jupiter', version.ref = 'mockito' }
+
+dependency-management-plugin = { module = 'io.spring.gradle:dependency-management-plugin', version.ref = 'dependency-management' }
+lombok-plugin = { module = 'io.freefair.gradle:lombok-plugin', version.ref = 'freefair-lombok' }
+
+[plugins]
+license = { id = 'com.github.hierynomus.license', version.ref = 'hierynomus-license' }
+lombok = { id = 'io.freefair.lombok', version.ref = 'freefair-lombok' }

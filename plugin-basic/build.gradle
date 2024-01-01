@@ -1,4 +1,6 @@
-apply plugin: 'java-gradle-plugin'
+plugins {
+  id 'java-gradle-plugin'
+}
 
 description = 'Devkit basic plugins'
 
@@ -39,11 +41,11 @@ dependencies {
   compileOnly localGroovy()
   compileOnly gradleApi()
 
-  api 'org.apache.commons:commons-lang3'
   api project(':febit-gradle-common')
+  api libs.commons.lang3
 
-  implementation "io.freefair.gradle:lombok-plugin"
-  implementation "io.spring.gradle:dependency-management-plugin"
+  implementation libs.lombok.plugin
+  implementation libs.dependency.management.plugin
 
   testImplementation localGroovy()
   testImplementation gradleApi()

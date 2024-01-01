@@ -38,6 +38,7 @@ import org.gradle.plugins.signing.Sign;
 import org.gradle.plugins.signing.SigningExtension;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 @RequiredArgsConstructor(staticName = "of")
 public class PublicationRegister {
@@ -97,7 +98,7 @@ public class PublicationRegister {
                 .getByType(PublishingExtension.class);
 
         signing.setRequired(
-                isSingingRequired()
+                (Callable<Boolean>) this::isSingingRequired
         );
         signing.sign(publishing.getPublications());
     }

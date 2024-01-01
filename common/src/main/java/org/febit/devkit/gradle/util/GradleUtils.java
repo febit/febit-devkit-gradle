@@ -25,6 +25,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.text.MessageFormat;
 
 @UtilityClass
@@ -62,6 +63,10 @@ public class GradleUtils {
                 action.run();
             }
         });
+    }
+
+    public static File buildDir(Project project) {
+        return project.getLayout().getBuildDirectory().getAsFile().get();
     }
 
     public static SourceSetContainer sourceSets(Project project) {
