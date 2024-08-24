@@ -98,12 +98,12 @@ public class PublicationRegister {
                 .getByType(PublishingExtension.class);
 
         signing.setRequired(
-                (Callable<Boolean>) this::isSingingRequired
+                (Callable<Boolean>) this::isWithSigning
         );
         signing.sign(publishing.getPublications());
     }
 
-    private boolean isSingingRequired() {
+    private boolean isWithSigning() {
         return "true".equals(config.get("signing"));
     }
 
@@ -172,11 +172,12 @@ public class PublicationRegister {
     }
 
     private void publishMustRunAfterSigning() {
-        if (!isSingingRequired()) {
-            return;
-        }
         var tasks = project.getTasks();
         var signingTasks = tasks.withType(Sign.class);
+        if (!isWithSigning()) {
+            signingTasks.configureEach(t -> t.setEnabled(false));
+            return;
+        }
         tasks.withType(AbstractPublishToMaven.class).configureEach(
                 task -> task.mustRunAfter(signingTasks)
         );
