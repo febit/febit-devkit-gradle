@@ -28,16 +28,20 @@ tasks.withType(AbstractPublishToMaven).configureEach {
   }
 }
 
-def requiredSigning = publishProperty('signing') == 'true'
+def withSigning = publishProperty('signing') == 'true'
 
-if (requiredSigning) {
+if (withSigning) {
   tasks.withType(AbstractPublishToMaven).configureEach {
     mustRunAfter tasks.withType(Sign)
+  }
+} else {
+  tasks.withType(Sign).configureEach {
+    enabled = false
   }
 }
 
 signing {
-  required requiredSigning
+  required withSigning
   sign publishing.publications
 }
 
