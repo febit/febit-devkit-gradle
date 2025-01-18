@@ -16,7 +16,6 @@
 package org.febit.devkit.gradle.standard.java;
 
 import io.freefair.gradle.plugins.lombok.LombokPlugin;
-import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.util.GitUtils;
@@ -44,12 +43,6 @@ import java.util.TreeMap;
 class StandardJavaRegister {
 
     private static final String UTF_8 = "UTF-8";
-    private static final String SOURCES = "sources";
-
-    private static final String GROUP_BUILD = "build";
-
-    private static final String TASK_SOURCE_JAR = "sourcesJar";
-    private static final String TASK_DELOMBOK = "delombok";
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
@@ -62,7 +55,6 @@ class StandardJavaRegister {
 
     private void apply() {
         applySubPlugins();
-        applySourceJarTask();
     }
 
     private void afterProjectEvaluate() {
@@ -144,22 +136,6 @@ class StandardJavaRegister {
                         task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
                     }
                 });
-    }
-
-    private void applySourceJarTask() {
-        var tasks = project.getTasks();
-
-        tasks.register(TASK_SOURCE_JAR, Jar.class, task -> {
-            task.dependsOn(TASK_DELOMBOK);
-            task.setGroup(GROUP_BUILD);
-            task.getArchiveClassifier().set(SOURCES);
-
-            var taskDeLombok = (Delombok) tasks.getByPath(TASK_DELOMBOK);
-            task.from(
-                    GradleUtils.mainSourceSet(project).getResources(),
-                    taskDeLombok.getTarget()
-            );
-        });
     }
 
 }
