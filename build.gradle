@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'org.febit.devkit.gradle'
-version '1.4.0'
+version '1.4.1-SNAPSHOT'
 
 ext {
 }
