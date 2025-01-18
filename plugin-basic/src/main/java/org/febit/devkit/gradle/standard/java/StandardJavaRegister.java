@@ -16,8 +16,10 @@
 package org.febit.devkit.gradle.standard.java;
 
 import io.freefair.gradle.plugins.lombok.LombokPlugin;
+import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.GitUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
@@ -38,6 +40,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static org.febit.devkit.gradle.util.GradleUtils.println;
 
 @RequiredArgsConstructor(staticName = "of")
 class StandardJavaRegister {
@@ -61,6 +65,7 @@ class StandardJavaRegister {
         applyOnce.ifRan(() -> {
             configJavaTasks();
             configJarManifest();
+            configLombokTasks();
         });
     }
 
@@ -70,6 +75,16 @@ class StandardJavaRegister {
         plugins.apply(JacocoPlugin.class);
         plugins.apply(LombokPlugin.class);
         plugins.apply(DependencyManagementPlugin.class);
+    }
+
+    private void configLombokTasks() {
+        var tasks = project.getTasks();
+        var codegenTasks = tasks.withType(CodegenTask.class).toArray();
+        if (codegenTasks.length > 0) {
+            tasks.withType(LombokTask.class, task -> {
+                task.mustRunAfter(codegenTasks);
+            });
+        }
     }
 
     private void configJarManifest() {

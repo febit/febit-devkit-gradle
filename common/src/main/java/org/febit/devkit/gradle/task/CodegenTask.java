@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.devkit.gradle.codegen.module;
+package org.febit.devkit.gradle.task;
 
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 
-public class CodegenModulePlugin implements Plugin<Project> {
-
-    @Override
-    public void apply(Project parent) {
-        parent.allprojects(project -> {
-            CodegenModuleRegister.of(project).register();
-        });
-    }
-
+public interface CodegenTask extends Task {
 }

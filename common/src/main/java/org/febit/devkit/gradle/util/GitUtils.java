@@ -16,6 +16,7 @@
 package org.febit.devkit.gradle.util;
 
 import lombok.experimental.UtilityClass;
+import org.gradle.api.file.Directory;
 
 import java.io.File;
 
@@ -25,6 +26,10 @@ import static org.febit.devkit.gradle.util.FileExtraUtils.readAndTrim;
 public class GitUtils {
 
     public static final String CANNOT_RESOLVED = "UNKNOWN";
+
+    public static String resolveHeadCommitId(Directory gitDir) {
+        return resolveHeadCommitId(gitDir.getAsFile());
+    }
 
     public static String resolveHeadCommitId(File gitDir) {
         var headFile = new File(gitDir, "HEAD");

@@ -18,10 +18,21 @@ package org.febit.devkit.gradle.codegen.module;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 import org.apache.commons.lang3.StringUtils;
+import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.FileExtraUtils;
+import org.febit.devkit.gradle.util.FolderUtils;
 import org.febit.devkit.gradle.util.GitUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
@@ -32,7 +43,27 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CodegenModuleTask extends DefaultTask {
+@CacheableTask
+public abstract class CodegenModuleTask extends DefaultTask implements CodegenTask {
+
+    @Input
+    protected abstract Property<String> getVersion();
+
+    @Input
+    protected abstract Property<String> getArtifactId();
+
+    @Input
+    protected abstract Property<String> getGroupId();
+
+    @OutputDirectory
+    protected abstract DirectoryProperty getGeneratedSourceDir();
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    protected abstract DirectoryProperty getGitDir();
+
+    @Input
+    protected abstract ListProperty<CodegenModuleExtension.ModuleEntry> getModules();
 
     @Inject
     public CodegenModuleTask() {
@@ -42,16 +73,7 @@ public class CodegenModuleTask extends DefaultTask {
 
     @TaskAction
     public void run() {
-        var extension = getProject().getExtensions()
-                .getByType(CodegenModuleExtension.class);
-
-        emitModuleClass(extension);
-    }
-
-    private void emitModuleClass(CodegenModuleExtension extension) {
-        extension.getModules().forEach(entry ->
-                emitModuleClass(extension, entry)
-        );
+        getModules().get().forEach(this::emitModule);
     }
 
     private Template loadTemplate(CodegenModuleExtension.ModuleEntry entry) {
@@ -65,7 +87,7 @@ public class CodegenModuleTask extends DefaultTask {
         }
     }
 
-    private void emitModuleClass(CodegenModuleExtension extension, CodegenModuleExtension.ModuleEntry entry) {
+    private void emitModule(CodegenModuleExtension.ModuleEntry entry) {
         var classFullName = entry.getName();
         if (StringUtils.isEmpty(classFullName)) {
             return;
@@ -80,8 +102,7 @@ public class CodegenModuleTask extends DefaultTask {
                 ? StringUtils.substringAfterLast(classFullName, ".")
                 : classFullName;
 
-        var proj = getProject();
-        var commitId = GitUtils.resolveHeadCommitId(extension.getGitDir());
+        var commitId = GitUtils.resolveHeadCommitId(getGitDir().get());
         var buildTime = Instant.ofEpochSecond(
                 System.currentTimeMillis() / 1000
         );
@@ -93,9 +114,9 @@ public class CodegenModuleTask extends DefaultTask {
                 "buildTime", buildTime,
                 "buildJdk", System.getProperty("java.version"),
                 "commitId", commitId,
-                "groupId", proj.getGroup(),
-                "artifactId", proj.getName(),
-                "version", proj.getVersion()
+                "groupId", getGroupId().get(),
+                "artifactId", getArtifactId().get(),
+                "version", getVersion().get()
         );
 
         var buf = new StringWriter();
@@ -108,7 +129,8 @@ public class CodegenModuleTask extends DefaultTask {
             throw new UncheckedIOException(e);
         }
 
-        var srcDir = extension.getGeneratedSourceDir();
+        var srcDir = getGeneratedSourceDir().get().getAsFile();
+        FolderUtils.mkdirs(srcDir);
         FileExtraUtils.writeJavaClass(srcDir, pkg, classSimpleName, buf.toString());
     }
 

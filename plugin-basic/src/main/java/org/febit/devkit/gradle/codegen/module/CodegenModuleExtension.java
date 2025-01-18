@@ -21,13 +21,15 @@ import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Provider;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CodegenModuleExtension {
 
@@ -40,33 +42,35 @@ public class CodegenModuleExtension {
     private static final TemplateResolver DEFAULT_TMPL_RESOLVER = fromClasspath(DEFAULT_TMPL);
 
     @Getter
-    @Setter
-    private File gitDir;
+    private final DirectoryProperty gitDir;
 
     @Getter
-    @Setter
-    private File generatedSourceDir;
+    private final DirectoryProperty generatedSourceDir;
 
     @Getter
-    @Setter
-    private File generatedResourceDir;
+    private final DirectoryProperty generatedResourceDir;
 
     @Getter
     @Setter
     private TemplateResolver defaultTemplate = DEFAULT_TMPL_RESOLVER;
 
     @Getter
-    private final List<ModuleEntry> modules = new ArrayList<>();
+    private final ListProperty<ModuleEntry> modules;
 
     @Inject
     public CodegenModuleExtension(Project project) {
-        this.gitDir = new File(project.getRootDir(), ".git");
+        var objects = project.getObjects();
 
-        var buildDir = project.getLayout().getBuildDirectory().getAsFile().get();
-        this.generatedSourceDir = new File(buildDir,
-                "generated/sources/" + CODEGEN_MODULE);
-        this.generatedResourceDir = new File(buildDir,
-                "generated/resources/" + CODEGEN_MODULE);
+        var rootDir = project.getRootProject().getLayout().getProjectDirectory();
+        this.gitDir = objects.directoryProperty()
+                .convention(rootDir.dir(".git"));
+
+        var buildDir = project.getLayout().getBuildDirectory();
+        this.generatedSourceDir = objects.directoryProperty()
+                .convention(buildDir.dir("generated/sources/" + CODEGEN_MODULE));
+        this.generatedResourceDir = objects.directoryProperty()
+                .convention(buildDir.dir("generated/resources/" + CODEGEN_MODULE));
+        this.modules = objects.listProperty(ModuleEntry.class).empty();
     }
 
     public void module(String name) {
@@ -98,13 +102,13 @@ public class CodegenModuleExtension {
     @Getter
     @Setter
     @RequiredArgsConstructor(staticName = "of")
-    public static class ModuleEntry {
+    public static class ModuleEntry implements Serializable {
         private final String name;
         private final TemplateResolver template;
     }
 
     @FunctionalInterface
-    public interface TemplateResolver {
+    public interface TemplateResolver extends Serializable {
 
         String resolve() throws IOException;
     }
@@ -118,7 +122,7 @@ public class CodegenModuleExtension {
 
         private final TemplateResolver delegated;
 
-        private String resolved;
+        private transient String resolved;
 
         @Override
         public String resolve() throws IOException {
