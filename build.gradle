@@ -5,8 +5,8 @@ plugins {
   alias libs.plugins.license
 }
 
-group 'org.febit.devkit.gradle'
-version '1.4.1-SNAPSHOT'
+group = 'org.febit.devkit.gradle'
+version = '1.4.1-SNAPSHOT'
 
 ext {
 }
@@ -14,22 +14,22 @@ ext {
 allprojects {
   apply plugin: 'com.github.hierynomus.license'
 
-  group rootProject.group
-  version rootProject.version
+  group = rootProject.group
+  version = rootProject.version
 
   license {
     mapping {
       java = 'SLASHSTAR_STYLE'
     }
     include '**/*.java'
-    strictCheck false
-    skipExistingHeaders false
-    header rootProject.file('etc/license-header.txt')
+    strictCheck = false
+    skipExistingHeaders = false
+    header = rootProject.file('etc/license-header.txt')
   }
 
   repositories {
-    maven { url "https://repo.huaweicloud.com/repository/maven/" }
-    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url = "https://repo.huaweicloud.com/repository/maven/" }
+    maven { url = 'https://maven.aliyun.com/repository/gradle-plugin' }
     mavenCentral()
   }
 }

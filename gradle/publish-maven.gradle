@@ -41,7 +41,7 @@ if (withSigning) {
 }
 
 signing {
-  required withSigning
+  required = withSigning
   sign publishing.publications
 }
 
