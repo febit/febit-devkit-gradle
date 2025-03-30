@@ -92,6 +92,8 @@ configure(javaLibModules()) {
     compileOnly libs.jsr305
     compileOnly libs.spotbugs.annotations
 
+    testCompileOnly libs.jsr305
+    testCompileOnly libs.spotbugs.annotations
     testImplementation libs.slf4j.api
     testImplementation libs.jupiter.api
     testImplementation libs.mockito.junit.jupiter

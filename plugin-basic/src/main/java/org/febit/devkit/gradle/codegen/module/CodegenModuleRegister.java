@@ -17,7 +17,6 @@ package org.febit.devkit.gradle.codegen.module;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
@@ -26,14 +25,21 @@ import org.gradle.jvm.tasks.Jar;
 @RequiredArgsConstructor(staticName = "of")
 class CodegenModuleRegister {
 
+    static final String EXTENSION = "codegenModule";
+    static final String GROUP = "codegen";
+    static final String TASK_GENERATE_MODULE = "generateModule";
+
     private final Project project;
 
     void register() {
         var extension = project.getExtensions()
-                .create(Constants.EXTENSION, CodegenModuleExtension.class, project);
+                .create(EXTENSION, CodegenModuleExtension.class, project);
 
         var tasks = project.getTasks();
-        tasks.register(Constants.TASK_GENERATE_MODULE, CodegenModuleTask.class, task -> {
+        tasks.register(TASK_GENERATE_MODULE, CodegenModuleTask.class, task -> {
+            task.setGroup(GROUP);
+            task.setDescription("Generate module files.");
+
             task.getGroupId().convention(project.provider(() -> project.getGroup().toString()));
             task.getArtifactId().convention(project.provider(project::getName));
             task.getVersion().convention(project.provider(() -> project.getVersion().toString()));
@@ -59,10 +65,10 @@ class CodegenModuleRegister {
 
         var tasks = project.getTasks();
         tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, task -> {
-            task.dependsOn(Constants.TASK_GENERATE_MODULE);
+            task.dependsOn(TASK_GENERATE_MODULE);
         });
         tasks.withType(Jar.class).configureEach(
-                jar -> jar.mustRunAfter(Constants.TASK_GENERATE_MODULE)
+                jar -> jar.mustRunAfter(TASK_GENERATE_MODULE)
         );
     }
 

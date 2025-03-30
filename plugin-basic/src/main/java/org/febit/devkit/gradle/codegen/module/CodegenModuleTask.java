@@ -30,6 +30,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
@@ -58,6 +59,7 @@ public abstract class CodegenModuleTask extends DefaultTask implements CodegenTa
     @OutputDirectory
     protected abstract DirectoryProperty getGeneratedSourceDir();
 
+    @Optional
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     protected abstract DirectoryProperty getGitDir();
@@ -67,8 +69,6 @@ public abstract class CodegenModuleTask extends DefaultTask implements CodegenTa
 
     @Inject
     public CodegenModuleTask() {
-        setGroup(Constants.GROUP);
-        setDescription("Generate module files.");
     }
 
     @TaskAction

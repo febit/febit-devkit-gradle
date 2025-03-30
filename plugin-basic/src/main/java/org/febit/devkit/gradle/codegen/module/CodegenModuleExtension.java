@@ -23,7 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.Provider;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -33,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 
 public class CodegenModuleExtension {
 
-    private static final String CODEGEN_MODULE = "codegen-module";
+    static final String CODEGEN_MODULE = "codegen-module";
 
     private static final String BUILD_IN_TMPL_PREFIX = "/org/febit/devkit/gradle/codegen/module/";
     private static final String DEFAULT_TMPL = BUILD_IN_TMPL_PREFIX + "default.tmpl";
