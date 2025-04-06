@@ -17,6 +17,7 @@ package org.febit.devkit.gradle.codegen.module;
 
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.FileExtraUtils;
@@ -44,6 +45,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @CacheableTask
 public abstract class CodegenModuleTask extends DefaultTask implements CodegenTask {
 
@@ -87,7 +89,18 @@ public abstract class CodegenModuleTask extends DefaultTask implements CodegenTa
         }
     }
 
+    private String resolveCommitId() {
+        var gitDir = getGitDir().getOrNull();
+        if (gitDir == null) {
+            log.info("Git directory not set, skipping commit id.");
+            return GitUtils.CANNOT_RESOLVED;
+        }
+        return GitUtils.resolveHeadCommitId(gitDir);
+    }
+
     private void emitModule(CodegenModuleExtension.ModuleEntry entry) {
+        log.info("Emit module: {}", entry.getName());
+
         var classFullName = entry.getName();
         if (StringUtils.isEmpty(classFullName)) {
             return;
@@ -102,7 +115,6 @@ public abstract class CodegenModuleTask extends DefaultTask implements CodegenTa
                 ? StringUtils.substringAfterLast(classFullName, ".")
                 : classFullName;
 
-        var commitId = GitUtils.resolveHeadCommitId(getGitDir().get());
         var buildTime = Instant.ofEpochSecond(
                 System.currentTimeMillis() / 1000
         );
@@ -113,14 +125,13 @@ public abstract class CodegenModuleTask extends DefaultTask implements CodegenTa
                 "classSimpleName", classSimpleName,
                 "buildTime", buildTime,
                 "buildJdk", System.getProperty("java.version"),
-                "commitId", commitId,
+                "commitId", resolveCommitId(),
                 "groupId", getGroupId().get(),
                 "artifactId", getArtifactId().get(),
                 "version", getVersion().get()
         );
 
         var buf = new StringWriter();
-
         try {
             loadTemplate(entry)
                     .make(new HashMap<>(params))

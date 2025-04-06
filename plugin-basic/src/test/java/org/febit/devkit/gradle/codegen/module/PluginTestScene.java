@@ -28,8 +28,10 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.testfixtures.ProjectBuilder;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import static org.febit.devkit.gradle.codegen.module.CodegenModuleRegister.TASK_GENERATE_MODULE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,8 +79,27 @@ class PluginTestScene {
             @lombok.NonNull
             String name
     ) throws IOException {
+        return create(
+                template,
+                name,
+                null
+        );
+    }
+
+    public static PluginTestScene create(
+            @lombok.NonNull
+            String template,
+            @lombok.NonNull
+            String name,
+            @Nullable
+            Consumer<File> projectDirCustomizer
+    ) throws IOException {
         var projectDir = new File("./build/test-plugin-scenes/codegen-module/" + name);
         FileUtils.copyDirectory(new File("./src/test/scenes-codegen-module/" + template), projectDir);
+
+        if (projectDirCustomizer != null) {
+            projectDirCustomizer.accept(projectDir);
+        }
 
         var project = (ProjectInternal) ProjectBuilder.builder()
                 .withProjectDir(projectDir)

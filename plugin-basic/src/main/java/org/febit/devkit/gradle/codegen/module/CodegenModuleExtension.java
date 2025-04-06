@@ -21,9 +21,11 @@ import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
@@ -59,10 +61,8 @@ public class CodegenModuleExtension {
     @Inject
     public CodegenModuleExtension(Project project) {
         var objects = project.getObjects();
-
-        var rootDir = project.getRootProject().getLayout().getProjectDirectory();
         this.gitDir = objects.directoryProperty()
-                .convention(rootDir.dir(".git"));
+                .convention(resolveDefaultGitDir(project));
 
         var buildDir = project.getLayout().getBuildDirectory();
         this.generatedSourceDir = objects.directoryProperty()
@@ -70,6 +70,16 @@ public class CodegenModuleExtension {
         this.generatedResourceDir = objects.directoryProperty()
                 .convention(buildDir.dir("generated/resources/" + CODEGEN_MODULE));
         this.modules = objects.listProperty(ModuleEntry.class).empty();
+    }
+
+    @Nullable
+    private static Directory resolveDefaultGitDir(Project project) {
+        var rootDir = project.getRootProject().getLayout().getProjectDirectory();
+        var dir = rootDir.dir(".git");
+        if (dir.getAsFile().exists()) {
+            return dir;
+        }
+        return null;
     }
 
     public void module(String name) {

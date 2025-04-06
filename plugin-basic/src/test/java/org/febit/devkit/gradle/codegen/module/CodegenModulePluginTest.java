@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.febit.devkit.gradle.codegen.module.CodegenModuleExtension.CODEGEN_MODULE;
@@ -97,18 +98,23 @@ class CodegenModulePluginTest {
 
     @Test
     void withGitDir() throws IOException {
-        var scene = PluginTestScene.create("basic", "with-git-dir");
+        var commitId = "1234567890abcdef1234567890abcdef12345678";
+        var scene = PluginTestScene.create("basic", "with-git-dir", rootDir -> {
+            var gitHead = new File(rootDir, ".git/HEAD");
+            try {
+                FileUtils.createParentDirectories(gitHead);
+                FileUtils.writeStringToFile(gitHead, commitId, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+
         var project = scene.project();
         project.setGroup(PROJ_GROUP);
         project.setVersion(PROJ_VERSION);
 
         var extension = scene.extension();
         extension.module("demo.TestWithGitDir");
-
-        var commitId = "1234567890abcdef1234567890abcdef12345678";
-        var gitHead = scene.file(".git/HEAD");
-        FileUtils.createParentDirectories(gitHead);
-        FileUtils.writeStringToFile(gitHead, commitId, StandardCharsets.UTF_8);
 
         scene.execute();
 
