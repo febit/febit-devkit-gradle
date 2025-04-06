@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import lombok.experimental.UtilityClass;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.SourceSet;
@@ -26,6 +27,10 @@ import org.gradle.api.tasks.SourceSetContainer;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.text.MessageFormat;
 
 @UtilityClass
@@ -89,4 +94,20 @@ public class GradleUtils {
         return target;
     }
 
+    public static URLClassLoader toClassLoader(Configuration conf) {
+        var urls = toUrls(conf);
+        return new URLClassLoader(urls);
+    }
+
+    public static URL[] toUrls(Configuration conf) {
+        return conf.resolve().stream()
+                .map(file -> {
+                    try {
+                        return file.toURI().toURL();
+                    } catch (MalformedURLException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .toArray(URL[]::new);
+    }
 }
