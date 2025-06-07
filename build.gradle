@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.febit.devkit.gradle'
-version = '1.4.2'
+version = '1.5.0-SNAPSHOT'
 
 ext {
 }
@@ -28,8 +28,6 @@ allprojects {
   }
 
   repositories {
-    maven { url = "https://repo.huaweicloud.com/repository/maven/" }
-    maven { url = 'https://maven.aliyun.com/repository/gradle-plugin' }
     mavenCentral()
   }
 }
