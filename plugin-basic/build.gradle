@@ -28,11 +28,17 @@ gradlePlugin {
       description = 'Standard maven publication'
       implementationClass = 'org.febit.devkit.gradle.standard.maven.publish.StandardMavenPublishPlugin'
     }
-    moduleCodegenPlugin {
+    codegenModulePlugin {
       id = 'org.febit.codegen-module'
       displayName = 'Febit Codegen Module Plugin'
       description = 'Generate module java classes'
       implementationClass = 'org.febit.devkit.gradle.codegen.module.CodegenModulePlugin'
+    }
+    codegenManifestPlugin {
+      id = 'org.febit.codegen-manifest'
+      displayName = 'Febit Codegen Manifest Plugin'
+      description = 'Generate manifest resources'
+      implementationClass = 'org.febit.devkit.gradle.codegen.manifest.CodegenManifestPlugin'
     }
   }
 }
