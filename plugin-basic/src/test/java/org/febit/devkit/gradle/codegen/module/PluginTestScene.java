@@ -27,13 +27,13 @@ import org.gradle.api.internal.tasks.TaskContainerInternal;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import static org.febit.devkit.gradle.codegen.module.CodegenModuleRegister.TASK_GENERATE_MODULE;
+import static org.febit.devkit.gradle.codegen.module.CodegenModuleSetup.TASK_GENERATE_MODULE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Getter

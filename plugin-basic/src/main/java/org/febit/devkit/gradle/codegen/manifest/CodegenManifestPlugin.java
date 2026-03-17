@@ -23,7 +23,7 @@ public class CodegenManifestPlugin implements Plugin<Project> {
     @Override
     public void apply(Project parent) {
         parent.allprojects(project -> {
-            CodegenManifestRegister.of(project).register();
+            CodegenManifestSetup.of(project).setup();
         });
     }
 

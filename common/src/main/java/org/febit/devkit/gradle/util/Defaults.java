@@ -16,8 +16,7 @@
 package org.febit.devkit.gradle.util;
 
 import lombok.experimental.UtilityClass;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @UtilityClass
 public class Defaults {

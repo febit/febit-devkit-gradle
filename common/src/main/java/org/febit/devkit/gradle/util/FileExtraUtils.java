@@ -17,8 +17,8 @@ package org.febit.devkit.gradle.util;
 
 import lombok.experimental.UtilityClass;
 import org.apache.commons.io.FileUtils;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

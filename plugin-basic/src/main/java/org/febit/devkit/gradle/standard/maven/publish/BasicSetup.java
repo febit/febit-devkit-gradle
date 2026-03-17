@@ -16,6 +16,7 @@
 package org.febit.devkit.gradle.standard.maven.publish;
 
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
@@ -25,14 +26,15 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
 
 @RequiredArgsConstructor(staticName = "of")
-class BasicRegister {
+class BasicSetup implements Setup {
 
     private static final String PUB_PLUGIN_MAVEN = "pluginMaven";
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    void register() {
+    @Override
+    public void setup() {
         project.afterEvaluate(p -> afterProjectEvaluate());
         GradleUtils.afterPlugin(project.getPlugins(), JavaBasePlugin.class, applyOnce::runIfNot);
     }
@@ -65,6 +67,5 @@ class BasicRegister {
             task.setEnabled(false);
         });
     }
-
 
 }

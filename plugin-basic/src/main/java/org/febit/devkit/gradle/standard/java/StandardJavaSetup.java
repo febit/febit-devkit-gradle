@@ -18,6 +18,7 @@ package org.febit.devkit.gradle.standard.java;
 import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.GitUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
@@ -41,7 +42,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @RequiredArgsConstructor(staticName = "of")
-class StandardJavaRegister {
+class StandardJavaSetup implements Setup {
 
     private static final String UTF_8 = "UTF-8";
     private static final String LOMBOK_GEN_CONFIG_MAIN = "generateEffectiveLombokConfig";
@@ -49,9 +50,9 @@ class StandardJavaRegister {
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    void register() {
+    @Override
+    public void setup() {
         project.afterEvaluate(p -> afterProjectEvaluate());
-
         GradleUtils.afterPlugin(project.getPlugins(), JavaBasePlugin.class, applyOnce::runIfNot);
     }
 

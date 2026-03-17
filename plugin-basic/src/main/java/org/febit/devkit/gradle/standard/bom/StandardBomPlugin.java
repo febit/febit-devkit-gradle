@@ -16,49 +16,18 @@
 package org.febit.devkit.gradle.standard.bom;
 
 import org.febit.devkit.gradle.standard.util.StandardUtils;
-import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPlatformPlugin;
-
-import java.util.Comparator;
-
-import static org.febit.devkit.gradle.util.Defaults.nvl;
 
 public class StandardBomPlugin implements Plugin<Project> {
 
-    private static final String CONF_API = "api";
-
-    private Project project;
-    private final RunOnce applyOnce = RunOnce.of(this::apply);
-
     @Override
     public void apply(Project project) {
-        this.project = project;
         if (!StandardUtils.isBom(project)) {
             throw new UnsupportedOperationException(
                     "name of BOM module should end with '-bom', but now is '" + project.getName() + "'");
         }
-
-        var plugins = project.getPlugins();
-        plugins.apply(JavaPlatformPlugin.class);
-
-        GradleUtils.afterPlugin(plugins, JavaPlatformPlugin.class, applyOnce::runIfNot);
+        StandardBomSetup.of(project).setup();
     }
 
-    private void apply() {
-        var constraints = project.getDependencies().getConstraints();
-        var subProjects = nvl(project.getParent(), project)
-                .getSubprojects();
-
-        subProjects.stream()
-                .filter(proj -> proj != project)
-                .filter(proj -> proj.getPlugins().hasPlugin(JavaBasePlugin.class))
-                .sorted(Comparator.comparing(Project::getName))
-                .forEach(proj ->
-                        constraints.add(CONF_API, proj)
-                );
-    }
 }

@@ -18,18 +18,20 @@ package org.febit.devkit.gradle.standard.java;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 
 @RequiredArgsConstructor(staticName = "of")
-class PomDependencyManagementRegister {
+class PomDependencyManagementSetup implements Setup {
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    void register() {
+    @Override
+    public void setup() {
         GradleUtils.afterPlugin(project.getPlugins(), DependencyManagementPlugin.class, applyOnce::runIfNot);
     }
 

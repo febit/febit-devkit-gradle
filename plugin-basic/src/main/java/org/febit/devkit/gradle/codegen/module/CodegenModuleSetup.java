@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.devkit.gradle.codegen.manifest;
+package org.febit.devkit.gradle.codegen.module;
 
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -23,24 +24,30 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.jvm.tasks.Jar;
 
 @RequiredArgsConstructor(staticName = "of")
-class CodegenManifestRegister {
+class CodegenModuleSetup implements Setup {
 
-    static final String EXTENSION = "codegenManifest";
+    static final String EXTENSION = "codegenModule";
     static final String GROUP = "codegen";
-    static final String TASK_GENERATE_MANIFEST = "generateManifests";
+    static final String TASK_GENERATE_MODULE = "generateModule";
 
     private final Project project;
 
-    void register() {
+    @Override
+    public void setup() {
         var extension = project.getExtensions()
-                .create(EXTENSION, CodegenManifestExtension.class, project);
+                .create(EXTENSION, CodegenModuleExtension.class, project);
 
         var tasks = project.getTasks();
-        tasks.register(TASK_GENERATE_MANIFEST, CodegenManifestTask.class, task -> {
+        tasks.register(TASK_GENERATE_MODULE, CodegenModuleTask.class, task -> {
             task.setGroup(GROUP);
-            task.setDescription("Generate manifest resources.");
-            task.getGeneratedResourceDir().convention(extension.getGeneratedResourceDir());
-            task.getManifestStubs().convention(extension.getManifestStubs());
+            task.setDescription("Generate module files.");
+
+            task.getGroupId().convention(project.provider(() -> project.getGroup().toString()));
+            task.getArtifactId().convention(project.provider(project::getName));
+            task.getVersion().convention(project.provider(() -> project.getVersion().toString()));
+            task.getGeneratedSourceDir().convention(extension.getGeneratedSourceDir());
+            task.getGitDir().convention(extension.getGitDir());
+            task.getModules().convention(extension.getModules());
         });
 
         project.afterEvaluate(p -> afterProjectEvaluate());
@@ -48,21 +55,22 @@ class CodegenManifestRegister {
 
     private void afterProjectEvaluate() {
         var extension = project.getExtensions()
-                .getByType(CodegenManifestExtension.class);
+                .getByType(CodegenModuleExtension.class);
 
         if (!project.getPlugins().hasPlugin(JavaBasePlugin.class)) {
             return;
         }
 
         var main = GradleUtils.mainSourceSet(project);
+        main.getJava().srcDir(extension.getGeneratedSourceDir());
         main.getResources().srcDir(extension.getGeneratedResourceDir());
 
         var tasks = project.getTasks();
-        tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME, task -> {
-            task.dependsOn(TASK_GENERATE_MANIFEST);
+        tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, task -> {
+            task.dependsOn(TASK_GENERATE_MODULE);
         });
         tasks.withType(Jar.class).configureEach(
-                jar -> jar.mustRunAfter(TASK_GENERATE_MANIFEST)
+                jar -> jar.mustRunAfter(TASK_GENERATE_MODULE)
         );
     }
 

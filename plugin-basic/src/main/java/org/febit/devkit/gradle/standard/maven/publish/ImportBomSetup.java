@@ -17,6 +17,7 @@ package org.febit.devkit.gradle.standard.maven.publish;
 
 import groovy.util.Node;
 import lombok.RequiredArgsConstructor;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
@@ -28,7 +29,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
-class ImportBomRegister {
+class ImportBomSetup implements Setup {
 
     private static final String N_DEPENDENCY_MANAGEMENT = "dependencyManagement";
     private static final String N_DEPENDENCIES = "dependencies";
@@ -42,7 +43,8 @@ class ImportBomRegister {
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    void register() {
+    @Override
+    public void setup() {
         project.afterEvaluate(p -> afterProjectEvaluate());
         GradleUtils.afterPlugin(project.getPlugins(), MavenPublishPlugin.class, applyOnce::runIfNot);
     }
@@ -87,9 +89,9 @@ class ImportBomRegister {
 
     private Node ensureChild(Node parent, String name) {
         for (var child : parent.children()) {
-            if ((child instanceof Node)
-                    && ((Node) child).name().equals(name)) {
-                return (Node) child;
+            if ((child instanceof Node node)
+                    && node.name().equals(name)) {
+                return node;
             }
         }
         return parent.appendNode(name);

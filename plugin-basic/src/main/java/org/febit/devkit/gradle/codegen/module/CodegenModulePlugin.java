@@ -23,7 +23,7 @@ public class CodegenModulePlugin implements Plugin<Project> {
     @Override
     public void apply(Project parent) {
         parent.allprojects(project -> {
-            CodegenModuleRegister.of(project).register();
+            CodegenModuleSetup.of(project).setup();
         });
     }
 

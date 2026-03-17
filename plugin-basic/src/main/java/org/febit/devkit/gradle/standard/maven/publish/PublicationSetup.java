@@ -17,6 +17,7 @@ package org.febit.devkit.gradle.standard.maven.publish;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
@@ -41,7 +42,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 @RequiredArgsConstructor(staticName = "of")
-public class PublicationRegister {
+public class PublicationSetup implements Setup {
 
     private static final String RUNTIME_CLASSPATH = "runtimeClasspath";
     private static final String PUBLICATION_NAME = "mavenArtifact";
@@ -55,7 +56,8 @@ public class PublicationRegister {
 
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
-    public void register() {
+    @Override
+    public void setup() {
         project.afterEvaluate(p -> afterProjectEvaluate());
 
         var plugins = project.getPlugins();

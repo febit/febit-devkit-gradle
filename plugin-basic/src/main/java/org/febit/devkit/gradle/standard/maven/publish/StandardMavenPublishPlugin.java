@@ -17,8 +17,8 @@ package org.febit.devkit.gradle.standard.maven.publish;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,9 +41,9 @@ public class StandardMavenPublishPlugin implements Plugin<Project> {
                 return;
             }
 
-            BasicRegister.of(project).register();
-            PublicationRegister.of(project, config).register();
-            ImportBomRegister.of(project).register();
+            BasicSetup.of(project).setup();
+            PublicationSetup.of(project, config).setup();
+            ImportBomSetup.of(project).setup();
         });
     }
 

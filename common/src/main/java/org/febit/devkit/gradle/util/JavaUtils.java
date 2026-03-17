@@ -17,8 +17,8 @@ package org.febit.devkit.gradle.util;
 
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Set;
@@ -129,8 +129,11 @@ public class JavaUtils {
         return resolveFinalComponentType(cls.getComponentType());
     }
 
-    public static String upperFirst(String ident) {
-        return ident.substring(0, 1).toUpperCase()
-                + ident.substring(1);
+    public static String upperFirst(String str) {
+        if (str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase()
+                + str.substring(1);
     }
 }

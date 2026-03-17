@@ -27,8 +27,8 @@ import org.gradle.api.internal.tasks.TaskContainerInternal;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,7 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import static org.febit.devkit.gradle.codegen.manifest.CodegenManifestRegister.TASK_GENERATE_MANIFEST;
+import static org.febit.devkit.gradle.codegen.manifest.CodegenManifestSetup.TASK_GENERATE_MANIFEST;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Getter
