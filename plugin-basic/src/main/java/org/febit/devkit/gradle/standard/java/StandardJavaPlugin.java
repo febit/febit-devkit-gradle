@@ -25,6 +25,7 @@ public class StandardJavaPlugin implements Plugin<Project> {
         parent.allprojects(project -> {
             StandardJavaSetup.of(project).setup();
             PomDependencyManagementSetup.of(project).setup();
+            LombokSetup.of(project).setup();
         });
     }
 }

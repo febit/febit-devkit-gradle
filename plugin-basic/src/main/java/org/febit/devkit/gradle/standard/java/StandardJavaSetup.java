@@ -15,11 +15,9 @@
  */
 package org.febit.devkit.gradle.standard.java;
 
-import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.GitUtils;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
@@ -45,7 +43,6 @@ import java.util.TreeMap;
 class StandardJavaSetup implements Setup {
 
     private static final String UTF_8 = "UTF-8";
-    private static final String LOMBOK_GEN_CONFIG_MAIN = "generateEffectiveLombokConfig";
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
@@ -64,7 +61,6 @@ class StandardJavaSetup implements Setup {
         applyOnce.ifRan(() -> {
             configJavaTasks();
             configJarManifest();
-            configLombokTasks();
         });
     }
 
@@ -72,28 +68,14 @@ class StandardJavaSetup implements Setup {
         var plugins = project.getPlugins();
 
         plugins.apply(JacocoPlugin.class);
-        plugins.apply(LombokPlugin.class);
         plugins.apply(DependencyManagementPlugin.class);
-    }
-
-    private void configLombokTasks() {
-        var tasks = project.getTasks();
-        var codegenTasks = tasks.withType(CodegenTask.class).toArray();
-        if (codegenTasks.length == 0) {
-            return;
-        }
-        tasks.matching(t -> LOMBOK_GEN_CONFIG_MAIN.equals(t.getName()))
-                .forEach(task -> {
-                    task.mustRunAfter(codegenTasks);
-                });
     }
 
     private void configJarManifest() {
         var task = project.getTasks().findByName(JavaPlugin.JAR_TASK_NAME);
-        if (!(task instanceof Jar)) {
+        if (!(task instanceof Jar jar)) {
             return;
         }
-        var jar = (Jar) task;
         var buildTime = Instant.ofEpochSecond(
                 System.currentTimeMillis() / 1000
         );
@@ -133,9 +115,8 @@ class StandardJavaSetup implements Setup {
         tasks.withType(Javadoc.class, javadoc -> {
             var options = javadoc.getOptions();
             options.setEncoding(UTF_8);
-            if (options instanceof CoreJavadocOptions) {
-                ((CoreJavadocOptions) options)
-                        .addStringOption("Xdoclint:none", "-quiet");
+            if (options instanceof CoreJavadocOptions opt) {
+                opt.addStringOption("Xdoclint:none", "-quiet");
             }
         });
 
@@ -146,7 +127,7 @@ class StandardJavaSetup implements Setup {
         });
 
         tasks.stream()
-                .filter(t -> t instanceof VerificationTask)
+                .filter(VerificationTask.class::isInstance)
                 .forEach(task -> {
                     if (task.getGroup() == null) {
                         task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
