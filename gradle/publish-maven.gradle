@@ -132,8 +132,8 @@ def customPom(MavenPom pom) {
     }
     developers {
       developer {
-        id = 'zqq'
-        name = 'Zhu Qingqing'
+        id = 'kurt'
+        name = 'Kurt Zhu'
         email = 'zqq@febit.org'
         timezone = '+8'
       }

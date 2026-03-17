@@ -7,11 +7,10 @@ jsr305 = '3.0.2'
 slf4j = '2.0.17'
 spotbugs = '4.9.8'
 
-junit = '5.14.1'
-junit-platform = '1.14.1'
-mockito = '5.20.0'
+junit = '6.0.3'
+mockito = '5.22.0'
 
-freefair-lombok = '9.1.0'
+freefair-lombok = '9.2.0'
 dependency-management = '1.1.7'
 
 [libraries]
@@ -24,7 +23,7 @@ spotbugs-annotations = { module = 'com.github.spotbugs:spotbugs-annotations', ve
 
 jupiter-api = { module = 'org.junit.jupiter:junit-jupiter-api', version.ref = 'junit' }
 jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version.ref = 'junit' }
-junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher', version.ref = 'junit-platform' }
+junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher', version.ref = 'junit' }
 mockito-junit-jupiter = { module = 'org.mockito:mockito-junit-jupiter', version.ref = 'mockito' }
 
 dependency-management-plugin = { module = 'io.spring.gradle:dependency-management-plugin', version.ref = 'dependency-management' }
