@@ -8,9 +8,9 @@ slf4j = '2.0.17'
 spotbugs = '4.9.8'
 
 junit = '6.0.3'
-mockito = '5.22.0'
+mockito = '5.23.0'
 
-freefair-lombok = '9.2.0'
+freefair-lombok = '9.4.0'
 dependency-management = '1.1.7'
 
 [libraries]

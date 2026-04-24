@@ -104,7 +104,6 @@ publishing {
   }
 }
 
-
 def customPom(MavenPom pom) {
   pom.with {
     name = project.name
