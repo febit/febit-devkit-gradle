@@ -15,13 +15,15 @@
  */
 package org.febit.devkit.gradle.codegen.module;
 
-import lombok.RequiredArgsConstructor;
-import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.util.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.jvm.tasks.Jar;
+
+import org.febit.devkit.gradle.plugin.Setup;
+import org.febit.devkit.gradle.util.GradleUtils;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "of")
 class CodegenModuleSetup implements Setup {

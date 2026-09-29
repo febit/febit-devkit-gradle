@@ -15,17 +15,18 @@
  */
 package org.febit.devkit.gradle.standard.maven.publish;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.MavenPom;
 
-import javax.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.inject.Inject;
 
 public class StandardMavenPublishExtension {
 

@@ -17,11 +17,13 @@ package org.febit.devkit.gradle.codegen.manifest;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import lombok.Getter;
-import org.febit.devkit.gradle.util.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
+
+import org.febit.devkit.gradle.util.GradleUtils;
+
+import lombok.Getter;
 
 import javax.inject.Inject;
 
@@ -51,4 +53,3 @@ public class CodegenManifestExtension {
     }
 
 }
-

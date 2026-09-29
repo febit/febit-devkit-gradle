@@ -15,8 +15,9 @@
  */
 package org.febit.devkit.gradle.util;
 
-import lombok.experimental.UtilityClass;
 import org.apache.commons.io.FileUtils;
+
+import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;

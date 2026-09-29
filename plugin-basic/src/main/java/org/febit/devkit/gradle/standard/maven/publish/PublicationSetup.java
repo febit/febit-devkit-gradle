@@ -15,12 +15,7 @@
  */
 package org.febit.devkit.gradle.standard.maven.publish;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.standard.util.StandardUtils;
-import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.credentials.HttpHeaderCredentials;
@@ -37,6 +32,13 @@ import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.authentication.http.HttpHeaderAuthentication;
 import org.gradle.plugins.signing.Sign;
 import org.gradle.plugins.signing.SigningExtension;
+
+import org.febit.devkit.gradle.plugin.Setup;
+import org.febit.devkit.gradle.standard.util.StandardUtils;
+import org.febit.devkit.gradle.util.GradleUtils;
+import org.febit.devkit.gradle.util.RunOnce;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.concurrent.Callable;

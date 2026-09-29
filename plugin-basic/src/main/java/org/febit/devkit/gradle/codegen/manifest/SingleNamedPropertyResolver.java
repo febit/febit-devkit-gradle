@@ -15,8 +15,9 @@
  */
 package org.febit.devkit.gradle.codegen.manifest;
 
-import lombok.RequiredArgsConstructor;
 import org.febit.devkit.gradle.util.SerializableSupplier;
+
+import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 import java.util.function.BiConsumer;

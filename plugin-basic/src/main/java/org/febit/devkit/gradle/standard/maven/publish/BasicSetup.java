@@ -15,15 +15,17 @@
  */
 package org.febit.devkit.gradle.standard.maven.publish;
 
-import lombok.RequiredArgsConstructor;
-import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven;
 import org.gradle.api.publish.tasks.GenerateModuleMetadata;
+
+import org.febit.devkit.gradle.plugin.Setup;
+import org.febit.devkit.gradle.util.GradleUtils;
+import org.febit.devkit.gradle.util.RunOnce;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "of")
 class BasicSetup implements Setup {

@@ -15,8 +15,9 @@
  */
 package org.febit.devkit.gradle.util;
 
-import lombok.experimental.UtilityClass;
 import org.gradle.api.file.Directory;
+
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 

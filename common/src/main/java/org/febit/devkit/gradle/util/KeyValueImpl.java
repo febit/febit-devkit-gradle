@@ -15,9 +15,10 @@
  */
 package org.febit.devkit.gradle.util;
 
+import org.apache.commons.collections4.KeyValue;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.KeyValue;
 
 @Data
 @RequiredArgsConstructor(staticName = "of")

@@ -15,13 +15,15 @@
  */
 package org.febit.devkit.gradle.standard.bom;
 
-import lombok.RequiredArgsConstructor;
-import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlatformPlugin;
+
+import org.febit.devkit.gradle.plugin.Setup;
+import org.febit.devkit.gradle.util.GradleUtils;
+import org.febit.devkit.gradle.util.RunOnce;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.Comparator;
 

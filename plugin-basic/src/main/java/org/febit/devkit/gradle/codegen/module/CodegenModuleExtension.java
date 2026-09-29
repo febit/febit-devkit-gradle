@@ -15,22 +15,23 @@
  */
 package org.febit.devkit.gradle.codegen.module;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import javax.inject.Inject;
 
 public class CodegenModuleExtension {
 
@@ -145,4 +146,3 @@ public class CodegenModuleExtension {
         }
     }
 }
-

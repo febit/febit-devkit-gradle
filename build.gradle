@@ -2,7 +2,7 @@ import java.time.Instant
 
 plugins {
   alias libs.plugins.lombok
-  alias libs.plugins.license
+  alias libs.plugins.spotless apply false
 }
 
 group = 'org.febit.devkit.gradle'
@@ -12,24 +12,43 @@ ext {
 }
 
 allprojects {
-  apply plugin: 'com.github.hierynomus.license'
+  apply plugin: 'com.diffplug.spotless'
 
   group = rootProject.group
   version = rootProject.version
 
-  license {
-    mapping {
-      java = 'SLASHSTAR_STYLE'
-    }
-    include '**/*.java'
-    strictCheck = false
-    skipExistingHeaders = false
-    header = rootProject.file('etc/license-header.txt')
-  }
-
   repositories {
     mavenCentral()
   }
+
+  spotless {
+    java {
+      target 'src/*/java/**/*.java'
+      licenseHeaderFile rootProject.file('etc/license-header.txt')
+
+      endWithNewline()
+      trimTrailingWhitespace()
+
+      shortenFullyQualifiedTypes()
+
+      cleanthat()
+          .addMutator('SafeAndConsensual')
+          .addMutator('PMD')
+          .addMutator('Stream')
+          .addMutator('SpotBugs')
+
+      removeUnusedImports()
+      importOrder(
+          '',
+          'org.febit',
+          'lombok|org.jspecify',
+          'jakarta|java|javax',
+          '\\#', '\\#jakarta|\\#java|\\#javax'
+      )
+    }
+  }
+
+  tasks.check.dependsOn tasks.named('spotlessCheck')
 }
 
 def javaLibModules() {

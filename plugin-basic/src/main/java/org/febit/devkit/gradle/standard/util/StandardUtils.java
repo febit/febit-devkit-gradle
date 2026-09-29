@@ -15,8 +15,9 @@
  */
 package org.febit.devkit.gradle.standard.util;
 
-import lombok.experimental.UtilityClass;
 import org.gradle.api.Project;
+
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class StandardUtils {

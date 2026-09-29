@@ -16,11 +16,6 @@
 package org.febit.devkit.gradle.standard.java;
 
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
-import lombok.RequiredArgsConstructor;
-import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.util.GitUtils;
-import org.febit.devkit.gradle.util.GradleUtils;
-import org.febit.devkit.gradle.util.RunOnce;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
@@ -32,6 +27,13 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.external.javadoc.CoreJavadocOptions;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
+
+import org.febit.devkit.gradle.plugin.Setup;
+import org.febit.devkit.gradle.util.GitUtils;
+import org.febit.devkit.gradle.util.GradleUtils;
+import org.febit.devkit.gradle.util.RunOnce;
+
+import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.time.Instant;

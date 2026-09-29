@@ -15,10 +15,6 @@
  */
 package org.febit.devkit.gradle.codegen.module;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.internal.TaskInternal;
@@ -27,6 +23,11 @@ import org.gradle.api.internal.tasks.TaskContainerInternal;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.testfixtures.ProjectBuilder;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;

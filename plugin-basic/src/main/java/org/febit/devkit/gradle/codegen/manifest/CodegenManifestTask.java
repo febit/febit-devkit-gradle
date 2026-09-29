@@ -15,9 +15,7 @@
  */
 package org.febit.devkit.gradle.codegen.manifest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.febit.devkit.gradle.task.CodegenTask;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
@@ -25,6 +23,10 @@ import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+
+import org.febit.devkit.gradle.task.CodegenTask;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;

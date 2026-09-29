@@ -15,9 +15,10 @@
  */
 package org.febit.devkit.gradle.standard.bom;
 
-import org.febit.devkit.gradle.standard.util.StandardUtils;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+
+import org.febit.devkit.gradle.standard.util.StandardUtils;
 
 public class StandardBomPlugin implements Plugin<Project> {
 

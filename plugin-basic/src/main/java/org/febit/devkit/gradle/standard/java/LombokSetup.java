@@ -17,13 +17,15 @@ package org.febit.devkit.gradle.standard.java;
 
 import io.freefair.gradle.plugins.lombok.LombokExtension;
 import io.freefair.gradle.plugins.lombok.LombokPlugin;
-import lombok.RequiredArgsConstructor;
+import org.gradle.api.Project;
+import org.gradle.api.plugins.JavaBasePlugin;
+
 import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
-import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaBasePlugin;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "of")
 public class LombokSetup implements Setup {

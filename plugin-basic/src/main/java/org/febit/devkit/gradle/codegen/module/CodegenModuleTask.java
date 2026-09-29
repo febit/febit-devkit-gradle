@@ -17,12 +17,7 @@ package org.febit.devkit.gradle.codegen.module;
 
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.febit.devkit.gradle.task.CodegenTask;
-import org.febit.devkit.gradle.util.FileExtraUtils;
-import org.febit.devkit.gradle.util.FolderUtils;
-import org.febit.devkit.gradle.util.GitUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
@@ -37,13 +32,20 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 
-import javax.inject.Inject;
+import org.febit.devkit.gradle.task.CodegenTask;
+import org.febit.devkit.gradle.util.FileExtraUtils;
+import org.febit.devkit.gradle.util.FolderUtils;
+import org.febit.devkit.gradle.util.GitUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
 
 @Slf4j
 @CacheableTask
