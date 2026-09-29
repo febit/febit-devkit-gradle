@@ -45,6 +45,8 @@ allprojects {
           'jakarta|java|javax',
           '\\#', '\\#jakarta|\\#java|\\#javax'
       )
+
+      tableTestFormatter()
     }
   }
 
@@ -113,6 +115,8 @@ configure(javaLibModules()) {
     testCompileOnly libs.spotbugs.annotations
     testImplementation libs.slf4j.api
     testImplementation libs.jupiter.api
+    testImplementation libs.jupiter.params
+    testImplementation libs.tabletest.junit
     testImplementation libs.mockito.junit.jupiter
     testRuntimeOnly libs.jupiter.engine
     testRuntimeOnly libs.junit.platform.launcher

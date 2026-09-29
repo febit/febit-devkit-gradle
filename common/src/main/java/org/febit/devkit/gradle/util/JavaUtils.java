@@ -94,7 +94,8 @@ public class JavaUtils {
     }
 
     public static String classSimpleName(String fullName) {
-        return StringUtils.substringAfterLast(fullName, ".");
+        int idx = fullName.lastIndexOf('.');
+        return idx < 0 ? fullName : fullName.substring(idx + 1);
     }
 
     public static boolean isDeprecated(@Nullable AnnotatedElement element) {
