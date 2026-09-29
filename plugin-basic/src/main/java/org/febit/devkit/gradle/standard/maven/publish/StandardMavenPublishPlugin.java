@@ -53,15 +53,18 @@ public class StandardMavenPublishPlugin implements Plugin<Project> {
         }
 
         var prefix = "publish." + profile + ".";
-        var map = new HashMap<String, String>();
+        var source = project.getProviders().gradlePropertiesPrefixedBy(prefix)
+                .getOrElse(Map.of());
 
-        project.getProperties().forEach((key, value) -> {
-            if (!key.startsWith(prefix) || value == null) {
+        var fixed = new HashMap<String, String>();
+        source.forEach((key, value) -> {
+            //noinspection ConstantValue
+            if (value == null) {
                 return;
             }
-            map.put(key.substring(prefix.length()), value.toString());
+            fixed.put(key.substring(prefix.length()), value);
         });
-        return Map.copyOf(map);
+        return Map.copyOf(fixed);
     }
 
 }
