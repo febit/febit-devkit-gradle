@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class LombokSetup implements Setup {
 
     private static final String TASK_GEN_CONFIG_MAIN = "generateEffectiveLombokConfig";
-    private static final String VERSION = "1.18.46";
+    private static final String VERSION = "1.18.48";
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
