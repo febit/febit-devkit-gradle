@@ -20,13 +20,20 @@ import com.diffplug.gradle.spotless.SpotlessExtension;
 import com.diffplug.gradle.spotless.SpotlessPlugin;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.PluginContainer;
+import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -62,5 +69,21 @@ class SpotlessSetupTest {
         verify(java).endWithNewline();
         verify(java).trimTrailingWhitespace();
         verifyNoMoreInteractions(java);
+    }
+
+    @Test
+    void registersCheckDependencyAndTaskGroup(@TempDir File projectDir) {
+        var project = (ProjectInternal) ProjectBuilder.builder()
+                .withProjectDir(projectDir)
+                .build();
+        project.getPlugins().apply(JavaPlugin.class);
+
+        SpotlessSetup.of(project).setup();
+        project.evaluate();
+
+        assertTrue(project.getPlugins().hasPlugin(SpotlessPlugin.class));
+        assertEquals("spotless", project.getTasks().getByName("spotlessJava").getGroup());
+        assertTrue(project.getTasks().getByName("check").getDependsOn().stream()
+                .anyMatch(dep -> String.valueOf(dep).contains("spotlessCheck")));
     }
 }

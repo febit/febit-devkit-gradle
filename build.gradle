@@ -59,6 +59,8 @@ def javaLibModules() {
   }
 }
 
+def LIBS = libs
+
 configure(javaLibModules()) {
   apply plugin: 'java-library'
   apply plugin: 'io.freefair.lombok'
@@ -108,17 +110,17 @@ configure(javaLibModules()) {
   }
 
   dependencies {
-    compileOnly libs.jsr305
-    compileOnly libs.spotbugs.annotations
+    compileOnly LIBS.jsr305
+    compileOnly LIBS.spotbugs.annotations
 
-    testCompileOnly libs.jsr305
-    testCompileOnly libs.spotbugs.annotations
-    testImplementation libs.slf4j.api
-    testImplementation libs.jupiter.api
-    testImplementation libs.jupiter.params
-    testImplementation libs.tabletest.junit
-    testImplementation libs.mockito.junit.jupiter
-    testRuntimeOnly libs.jupiter.engine
-    testRuntimeOnly libs.junit.platform.launcher
+    testCompileOnly LIBS.jsr305
+    testCompileOnly LIBS.spotbugs.annotations
+    testImplementation LIBS.slf4j.api
+    testImplementation LIBS.jupiter.api
+    testImplementation LIBS.jupiter.params
+    testImplementation LIBS.tabletest.junit
+    testImplementation LIBS.mockito.junit.jupiter
+    testRuntimeOnly LIBS.jupiter.engine
+    testRuntimeOnly LIBS.junit.platform.launcher
   }
 }

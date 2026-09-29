@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 class StandardUtilsTest {
 
     @TableTest("""
-            Scenario        | version      | expectSnapshot
-            snapshot suffix | 1.0-SNAPSHOT | true
-            release version | 1.0.0        | false
-            empty version   | ''           | false
-            null version    |              | false
-            """)
+        Scenario        | version      | expectSnapshot
+        snapshot suffix | 1.0-SNAPSHOT | true
+        release version | 1.0.0        | false
+        empty version   | ''           | false
+        null version    |              | false
+        """)
     void isSnapshot(String version, boolean expectSnapshot) {
         var project = mock(Project.class);
         when(project.getVersion()).thenReturn(version);
@@ -38,11 +38,11 @@ class StandardUtilsTest {
     }
 
     @TableTest("""
-            Scenario     | name      | expectBom
-            bom suffix   | demo-bom  | true
-            other suffix | demo-core | false
-            no suffix    | bom       | false
-            """)
+        Scenario     | name      | expectBom
+        bom suffix   | demo-bom  | true
+        other suffix | demo-core | false
+        no suffix    | bom       | false
+        """)
     void isBom(String name, boolean expectBom) {
         var project = mock(Project.class);
         when(project.getName()).thenReturn(name);
@@ -50,11 +50,11 @@ class StandardUtilsTest {
     }
 
     @TableTest("""
-            Scenario            | name              | expectDependencies
-            dependencies suffix | demo-dependencies | true
-            bom suffix          | demo-bom          | false
-            no suffix           | dependencies      | false
-            """)
+        Scenario            | name              | expectDependencies
+        dependencies suffix | demo-dependencies | true
+        bom suffix          | demo-bom          | false
+        no suffix           | dependencies      | false
+        """)
     void isDependencies(String name, boolean expectDependencies) {
         var project = mock(Project.class);
         when(project.getName()).thenReturn(name);

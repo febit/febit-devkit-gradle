@@ -15,59 +15,38 @@
  */
 package org.febit.devkit.gradle.standard.java;
 
-import io.freefair.gradle.plugins.lombok.LombokExtension;
-import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaBasePlugin;
+import org.gradle.testing.jacoco.plugins.JacocoPlugin;
+import org.gradle.testing.jacoco.tasks.JacocoReport;
 
 import org.febit.devkit.gradle.plugin.Setup;
-import org.febit.devkit.gradle.task.CodegenTask;
 import org.febit.devkit.gradle.util.GradleUtils;
 import org.febit.devkit.gradle.util.RunOnce;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "of")
-public class LombokSetup implements Setup {
-
-    private static final String TASK_GEN_CONFIG_MAIN = "generateEffectiveLombokConfig";
-    private static final String VERSION = "1.18.48";
+public class JacocoSetup implements Setup {
 
     private final Project project;
     private final RunOnce applyOnce = RunOnce.of(this::apply);
 
     @Override
     public void setup() {
-        project.afterEvaluate(p -> afterProjectEvaluate());
         GradleUtils.afterPlugin(project.getPlugins(), JavaBasePlugin.class, applyOnce::runIfNot);
     }
 
     private void apply() {
-        project.getPlugins().apply(LombokPlugin.class);
+        project.getPlugins().apply(JacocoPlugin.class);
+        configReports();
     }
 
-    private void afterProjectEvaluate() {
-        applyOnce.ifRan(() -> {
-            configVersion();
-            configTasks();
-        });
+    private void configReports() {
+        project.getTasks()
+                .withType(JacocoReport.class)
+                .configureEach(report ->
+                        report.getReports().getXml().getRequired().set(true)
+                );
     }
-
-    private void configVersion() {
-        var ex = project.getExtensions().getByType(LombokExtension.class);
-        ex.getVersion().convention(VERSION);
-    }
-
-    private void configTasks() {
-        var tasks = project.getTasks();
-        var codegenTasks = tasks.withType(CodegenTask.class).toArray();
-        if (codegenTasks.length == 0) {
-            return;
-        }
-        tasks.matching(t -> TASK_GEN_CONFIG_MAIN.equals(t.getName()))
-                .configureEach(task -> {
-                    task.mustRunAfter(codegenTasks);
-                });
-    }
-
 }

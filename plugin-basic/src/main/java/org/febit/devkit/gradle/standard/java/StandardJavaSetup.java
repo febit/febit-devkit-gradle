@@ -26,7 +26,6 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.external.javadoc.CoreJavadocOptions;
-import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
 import org.febit.devkit.gradle.plugin.Setup;
 import org.febit.devkit.gradle.util.GitUtils;
@@ -67,7 +66,6 @@ class StandardJavaSetup implements Setup {
     private void applySubPlugins() {
         var plugins = project.getPlugins();
 
-        plugins.apply(JacocoPlugin.class);
         plugins.apply(DependencyManagementPlugin.class);
     }
 

@@ -17,7 +17,6 @@ package org.febit.devkit.gradle.standard.java;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
 import com.diffplug.gradle.spotless.SpotlessPlugin;
-import com.diffplug.gradle.spotless.SpotlessTask;
 import org.gradle.api.Project;
 
 import org.febit.devkit.gradle.plugin.Setup;
@@ -34,7 +33,6 @@ import static org.gradle.language.base.plugins.LifecycleBasePlugin.CHECK_TASK_NA
 public class SpotlessSetup implements Setup {
 
     private static final String SPOTLESS_CHECK_TASK_NAME = "spotlessCheck";
-    private static final String SPOTLESS_GROUP = "spotless";
     private static final String DEFAULT_TARGET = "src/*/java/**/*.java";
 
     private final Project project;
@@ -66,12 +64,6 @@ public class SpotlessSetup implements Setup {
         tasks.named(CHECK_TASK_NAME)
                 .configure(t ->
                         t.dependsOn(SPOTLESS_CHECK_TASK_NAME)
-                );
-
-        tasks.stream()
-                .filter(SpotlessTask.class::isInstance)
-                .forEach(t ->
-                        t.setGroup(SPOTLESS_GROUP)
                 );
     }
 

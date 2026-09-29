@@ -70,74 +70,74 @@ class JavaUtilsTest {
     }
 
     @TableTest("""
-            Scenario         | word         | expectKeyword
-            reserved word    | class        | true
-            primitive type   | int          | true
-            null literal     | null         | true
-            access modifier  | public       | true
-            void type        | void         | true
-            synchronization  | synchronized | true
-            assertion        | assert       | true
-            plain identifier | foo          | false
-            class name       | Bar          | false
-            type name        | String       | false
-            underscore name  | _x           | false
-            mixed identifier | myVar1       | false
-            """)
+        Scenario         | word         | expectKeyword
+        reserved word    | class        | true
+        primitive type   | int          | true
+        null literal     | null         | true
+        access modifier  | public       | true
+        void type        | void         | true
+        synchronization  | synchronized | true
+        assertion        | assert       | true
+        plain identifier | foo          | false
+        class name       | Bar          | false
+        type name        | String       | false
+        underscore name  | _x           | false
+        mixed identifier | myVar1       | false
+        """)
     void isKeyword(String word, boolean expectKeyword) {
         assertEquals(expectKeyword, JavaUtils.isKeyword(word));
     }
 
     @TableTest("""
-            Scenario       | fullName | expectPackage
-            qualified name | a.b.C    | a.b
-            simple name    | C        | C
-            trailing dot   | a.       | a
-            """)
+        Scenario       | fullName | expectPackage
+        qualified name | a.b.C    | a.b
+        simple name    | C        | C
+        trailing dot   | a.       | a
+        """)
     void pkg(String fullName, String expectPackage) {
         assertEquals(expectPackage, JavaUtils.pkg(fullName));
     }
 
     @TableTest("""
-            Scenario       | fullName | expectSimpleName
-            qualified name | a.b.C    | C
-            simple name    | C        | C
-            """)
+        Scenario       | fullName | expectSimpleName
+        qualified name | a.b.C    | C
+        simple name    | C        | C
+        """)
     void classSimpleName(String fullName, String expectSimpleName) {
         assertEquals(expectSimpleName, JavaUtils.classSimpleName(fullName));
     }
 
     @TableTest("""
-            Scenario      | input | expectUpperFirst
-            empty string  | ''    | ''
-            single letter | a     | A
-            already upper | Ab    | Ab
-            lower word    | abc   | Abc
-            """)
+        Scenario      | input | expectUpperFirst
+        empty string  | ''    | ''
+        single letter | a     | A
+        already upper | Ab    | Ab
+        lower word    | abc   | Abc
+        """)
     void upperFirst(String input, String expectUpperFirst) {
         assertEquals(expectUpperFirst, JavaUtils.upperFirst(input));
     }
 
     @TableTest("""
-            Scenario             | cls             | pkg     | expectInPackage
-            exact package        | com.foo.Bar     | com.foo | true
-            sub package          | com.foo.bar.Baz | com.foo | false
-            prefix without dot   | com.fooBar      | com.foo | false
-            same as package      | com.foo         | com.foo | false
-            shorter than package | com.fo          | com.foo | false
-            other package        | foo.bar.Baz     | foo     | false
-            """)
+        Scenario             | cls             | pkg     | expectInPackage
+        exact package        | com.foo.Bar     | com.foo | true
+        sub package          | com.foo.bar.Baz | com.foo | false
+        prefix without dot   | com.fooBar      | com.foo | false
+        same as package      | com.foo         | com.foo | false
+        shorter than package | com.fo          | com.foo | false
+        other package        | foo.bar.Baz     | foo     | false
+        """)
     void isInPackage(String cls, String pkg, boolean expectInPackage) {
         assertEquals(expectInPackage, JavaUtils.isInPackage(cls, pkg));
     }
 
     @TableTest("""
-            Scenario      | input              | expectFinalType
-            plain type    | java.lang.String   | java.lang.String
-            primitive dir | int[]              | int
-            object array  | java.lang.String[] | java.lang.String
-            three levels  | int[][][]          | int
-            """)
+        Scenario      | input              | expectFinalType
+        plain type    | java.lang.String   | java.lang.String
+        primitive dir | int[]              | int
+        object array  | java.lang.String[] | java.lang.String
+        three levels  | int[][][]          | int
+        """)
     void resolveFinalComponentType(Class<?> input, Class<?> expectFinalType) {
         assertSame(expectFinalType, JavaUtils.resolveFinalComponentType(input));
     }

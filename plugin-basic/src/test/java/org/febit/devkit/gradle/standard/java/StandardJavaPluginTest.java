@@ -26,6 +26,7 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.logging.TestLogEvent;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
+import org.gradle.testing.jacoco.tasks.JacocoReport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,11 +50,13 @@ class StandardJavaPluginTest {
         project.setGroup("org.febit.tests");
         project.setVersion("1.2.3");
 
-        project.getPlugins().apply(StandardJavaPlugin.class);
         project.getPlugins().apply(JavaPlugin.class);
+        project.getPlugins().apply(StandardJavaPlugin.class);
         project.evaluate();
 
         assertTrue(project.getPlugins().hasPlugin(JacocoPlugin.class));
+        assertTrue(((JacocoReport) project.getTasks().getByName("jacocoTestReport"))
+                .getReports().getXml().getRequired().get());
         assertTrue(project.getPlugins().hasPlugin(DependencyManagementPlugin.class));
         assertTrue(project.getPlugins().hasPlugin(LombokPlugin.class));
         assertTrue(project.getPlugins().hasPlugin(SpotlessPlugin.class));
@@ -62,6 +66,7 @@ class StandardJavaPluginTest {
         assertEquals("spotless", project.getTasks().getByName("spotlessJava").getGroup());
         assertTrue(project.getTasks().getByName("check").getDependsOn().stream()
                 .anyMatch(dep -> String.valueOf(dep).contains("spotlessCheck")));
+        assertTrue(project.getTasks().getNames().contains("integrationTest"));
 
         var compileJava = (JavaCompile) project.getTasks().getByName("compileJava");
         assertEquals("UTF-8", compileJava.getOptions().getEncoding());
@@ -72,6 +77,8 @@ class StandardJavaPluginTest {
         assertTrue(testTask.getTestLogging().getEvents().containsAll(Set.of(
                 TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED,
                 TestLogEvent.STANDARD_OUT, TestLogEvent.STANDARD_ERROR)));
+        assertTrue(testTask.getIncludes().contains("**/*Test.class"));
+        assertFalse(testTask.getJvmArgumentProviders().isEmpty());
 
         var javadoc = (Javadoc) project.getTasks().getByName("javadoc");
         assertEquals("UTF-8", javadoc.getOptions().getEncoding());
