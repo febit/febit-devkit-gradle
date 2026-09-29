@@ -60,10 +60,8 @@ class StandardJavaSetup implements Setup {
     }
 
     private void afterProjectEvaluate() {
-        applyOnce.ifRan(() -> {
-            configJavaTasks();
-            configJarManifest();
-        });
+        applyOnce.ifRan(this::configJavaTasks);
+        applyOnce.ifRan(this::configJarManifest);
     }
 
     private void applySubPlugins() {

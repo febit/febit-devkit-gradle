@@ -52,6 +52,7 @@ dependencies {
 
   implementation libs.lombok.plugin
   implementation libs.dependency.management.plugin
+  implementation libs.spotless.plugin
 
   testImplementation localGroovy()
   testImplementation gradleApi()

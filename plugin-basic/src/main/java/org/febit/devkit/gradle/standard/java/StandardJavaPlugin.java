@@ -23,6 +23,7 @@ public class StandardJavaPlugin implements Plugin<Project> {
     @Override
     public void apply(Project parent) {
         parent.allprojects(project -> {
+            SpotlessSetup.of(project).setup();
             StandardJavaSetup.of(project).setup();
             PomDependencyManagementSetup.of(project).setup();
             LombokSetup.of(project).setup();

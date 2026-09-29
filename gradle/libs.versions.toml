@@ -29,6 +29,7 @@ junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher
 mockito-junit-jupiter = { module = 'org.mockito:mockito-junit-jupiter', version.ref = 'mockito' }
 tabletest-junit = { module = 'org.tabletest:tabletest-junit', version.ref = 'tabletest-junit' }
 
+spotless-plugin = { module = 'com.diffplug.spotless:spotless-plugin-gradle', version.ref = 'spotless' }
 dependency-management-plugin = { module = 'io.spring.gradle:dependency-management-plugin', version.ref = 'dependency-management' }
 lombok-plugin = { module = 'io.freefair.gradle:lombok-plugin', version.ref = 'freefair-lombok' }
 
