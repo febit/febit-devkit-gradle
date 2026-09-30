@@ -82,7 +82,7 @@ class SpotlessSetupTest {
         project.evaluate();
 
         assertTrue(project.getPlugins().hasPlugin(SpotlessPlugin.class));
-        assertEquals("spotless", project.getTasks().getByName("spotlessJava").getGroup());
+        assertEquals("verification", project.getTasks().getByName("spotlessJava").getGroup());
         assertTrue(project.getTasks().getByName("check").getDependsOn().stream()
                 .anyMatch(dep -> String.valueOf(dep).contains("spotlessCheck")));
     }

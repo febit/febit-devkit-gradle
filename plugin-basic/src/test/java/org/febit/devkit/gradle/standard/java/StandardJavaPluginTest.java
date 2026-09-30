@@ -63,7 +63,7 @@ class StandardJavaPluginTest {
 
         assertTrue(project.getTasks().getNames().contains("spotlessJavaCheck"));
         assertTrue(project.getTasks().getNames().contains("spotlessJavaApply"));
-        assertEquals("spotless", project.getTasks().getByName("spotlessJava").getGroup());
+        assertEquals("verification", project.getTasks().getByName("spotlessJava").getGroup());
         assertTrue(project.getTasks().getByName("check").getDependsOn().stream()
                 .anyMatch(dep -> String.valueOf(dep).contains("spotlessCheck")));
         assertTrue(project.getTasks().getNames().contains("integrationTest"));
