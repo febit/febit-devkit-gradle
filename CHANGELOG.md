@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.7.0] - not yet released
+## [1.7.0] - 2026-09-30
 
 ### Breaking Changes
 
